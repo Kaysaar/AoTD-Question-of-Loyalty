@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Qol">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/jars/Qol.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

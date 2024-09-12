@@ -1,0 +1,12 @@
+{
+	"id":"aotd_qol",
+	"name": "AoTD - Question of Loyalty",
+	"author":"Kaysaar",
+	"utility":"false",
+	"version":"1.0.0",
+	"description":"Overhaul of commision mechanic.",
+	"gameVersion": "0.97a-RC11",
+	"jars":["jars/Qol.jar"],
+	"modPlugin":"kaysaar.aotd_question_of_loyalty.data.plugins.AotDQoLPlugin"
+
+}

@@ -1,0 +1,114 @@
+id,trigger,conditions,script,text,options,notes
+aiCores_turnInOptionSelected_aotd,DialogOptionSelected,$option == aotd_aiCores_selectCores,AoTDAiCores selectCores,,,
+,,,,,,
+,,,,,,
+aotd_cmsn_hasLeagueMembership,DialogOptionSelected,"$option == aotd_cmsn_resignCommission
+$faction.id == persean
+$player.isLeagueMember score:1000",SetEnabled aotd_cmsn_resignCommission false,,,
+,,,,,,
+aotd_cmsn_lolNo,DialogOptionSelected,"$option == aotd_cmsn_askCommission
+$faction.isHostile score:100","SetEnabled aotd_cmsn_askCommission false
+FireBest CMSNTextRejectHostile",,,
+aotd_cmsn_hasOther,DialogOptionSelected,"$option == aotd_cmsn_askCommission
+!$faction.isHostile
+AoTDCommision hasOtherCommission","SetEnabled aotd_cmsn_askCommission false
+FireBest CMSNTextHasOther",,,
+aotd_cmsn_doesNotMeetCriteria,DialogOptionSelected,"$option == aotd_cmsn_askCommission
+!AoTDCommision playerMeetsCriteria","SetEnabled aotd_cmsn_askCommission false
+FireBest CMSNTextUnsuited
+Commission printRequirements",,,
+aotd_cmsn_meetsCriteria,DialogOptionSelected,"$option == aotd_cmsn_askCommission
+AoTDCommision playerMeetsCriteria
+!AoTDCommision isSteppingIntoNoReturn",FireBest CMSNTextSuitedPart1,,0:aotd_cmsn_continueMeetsReq:Continue,
+aotd_cmsn_meetsCriteria2,DialogOptionSelected,$option == aotd_cmsn_continueMeetsReq,"AoTDCommision printInfo
+FireBest CMSNTextSuitedPart2",,"0:aotd_cmsn_accept:Accept $factionAOrAn $faction commission
+1:aotd_cmsn_cancel:""Perhaps I'm not quite ready for this.""",
+aotd_cmsn_accept,DialogOptionSelected,$option == aotd_cmsn_accept,"FireBest CMSNTextWelcomePart1
+AoTDCommision accept
+FireBest CMSNTextWelcomePart2
+FireAll PopulateOptions",,,
+aotd_cmsn_cancel,DialogOptionSelected,$option == aotd_cmsn_cancel,"FireBest CMSNTextChangeMind
+FireAll PopulateOptions",,,
+aotd_cmsn_resignShowOptions,DialogOptionSelected,$option == aotd_cmsn_resignCommission,FireBest CMSNResignAskToConfirm,,"0:aotd_cmsn_resignConfirm:""Yes, I'm sure.""
+1:aotd_cmsn_resignCancel:""Never mind, I've reconsidered.""",
+aotd_cmsn_resignConfirm,DialogOptionSelected,$option == aotd_cmsn_resignConfirm,"FireBest CMSNResignConfirmed
+AoTDCommision resign
+FireAll PopulateOptions",,,
+aotd_cmsn_resignCancel,DialogOptionSelected,$option == aotd_cmsn_resignCancel,"FireBest CMSNResignCancelled
+FireAll PopulateOptions",,,
+aotd_cmsn_meetsCriteria3,DialogOptionSelected,"$option == aotd_cmsn_askCommission
+AoTDCommision playerMeetsCriteria
+AoTDCommision isSteppingIntoNoReturn","FireBest CMSNTextSuitedPart1
+AotdWarning",,0:aotd_cmsn_continueMeetsReq:Understandable,
+aotd_csmn_block_colony,PopulateOptions,"$market.isPlanetConditionMarketOnly
+$market.isSurveyed
+!$market.hasUnexploredRuins
+!AoTDCommision canColonize",SetEnabled surveyPerform false,"We can't colonize, due to being commisioned and not having permit for colonization!",,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+aotd_refuse_scan_option_rank_option,DialogOptionSelected,$option == aotd_refuse_scan,"SetNearbyFleetsVariable 5000 $faction.id $patrolAllowTOff true 10
+$entity.patrolAllowTOff = true 10
+BroadcastCancelPlayerAction 5000 $sawPlayerTransponderOff
+MakeOtherFleetPreventDisengage cargoScan false
+MakeOtherFleetAggressive cargoScan false
+MakeOtherFleetAggressive tOff false
+MakeOtherFleetPreventDisengage tOff false
+$entity.sawPlayerWithTOffCount = 0
+unset $entity.pursuePlayer_smugglingScan
+unset $entity.cargoScanConv
+$entity.smugglingScanComplete = true 1
+ShowDefaultVisual
+EndConversation","Raising a hand to interrupt the Squadron Commander mid-speech, you utter a code word which gives them pause. After informing you to please hold, they put the communication on hold before returning a few minutes later. Visibly uncomfortable, $heOrShe salutes you and informs you that your movements will not be monitored or sent to $hisOrHer superiors. They apologise for stopping you and if there is nothing more, terminate the transmission. As if Hell itself were on $hisOrHer heels, the formation abruptly burns away in the complete opposite direction.",,
+aotd_want_promotion,DialogOptionSelected,$option == aotd_ask_promotion,AoTDPromotion,,,
+aotd_want_promotion2,AotdPromotion,,AoTDHandlePromotion initConversation,,,
+aotd_promotion_accept,DialogOptionSelected,$option == aotd_return,"FireAll PopulateOptions
+AoTDHandlePromotion promote",What would you wanna to discuss further?,,
+aotd_promotion_after_warning,DialogOptionSelected,$option == aotd_confirm_no_going_back,AoTDHandlePromotion overrideInitConversation,,,
+aotd_promotion_decline ,DialogOptionSelected,$option == aotd_return_no_rank,FireAll PopulateOptions,,,
+,,,,,,
+#Smuggler mechanic ,,,,,,
+aotd_can_cargo_check,OpenCommLink,AoTDSmugglerScan canCargoCheck score:20000,ShowDefaultVisual,"Hail Captain, what seems to be the trouble today?","10:aotd_cargo_scan:We would like to scan your cargo
+20:cutCommLink:Cut the comm link",
+aotd_can_cargo_pop_options,DialogOptionSelected,$option == aotd_cargo_scan,AoTDSmugglerScan getResultsOfScan,,,
+aotd_can_cargo_seize,DialogOptionSelected,$option == aotd_seize_cargo,AoTDSmugglerScan pillage,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,

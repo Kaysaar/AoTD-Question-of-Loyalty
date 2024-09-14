@@ -18,6 +18,7 @@ import com.fs.starfarer.api.impl.campaign.intel.events.EventFactor;
 import com.fs.starfarer.api.impl.campaign.shared.SharedData;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import data.kaysaar.aotd.vok.campaign.econ.globalproduction.models.GPManager;
 import kaysaar.aotd_question_of_loyalty.data.listeners.AoTDFreeStorageComm;
 import kaysaar.aotd_question_of_loyalty.data.misc.QoLMisc;
 import kaysaar.aotd_question_of_loyalty.data.models.BaseFactionCommisionData;
@@ -169,7 +170,7 @@ public class AoTDCommIntelPlugin extends BaseEventIntel implements EconomyTickLi
         stages.clear();
         setMaxProgress(data.maxProgress);
         for (RankData rank : data.ranks) {
-            addStage(rank.id, data.rankValue.get(rank.id), StageIconSize.MEDIUM);
+            addStage(rank.id, data.rankValue.get(rank.id), StageIconSize.SMALL);
             getDataFor(rank.id).keepIconBrightWhenLaterStageReached = true;
         }
 
@@ -357,8 +358,13 @@ public class AoTDCommIntelPlugin extends BaseEventIntel implements EconomyTickLi
         if(rank.getTarrifReduciton()>0){
             info.addPara("Reduced tariff for goods by %s", initPad,Misc.getTooltipTitleAndLightHighlightColor(),Color.ORANGE,""+(int)rank.getTarrifReduciton()+"%");
         }
-        if(rank.hasTag(AoTDRankTags.CAN_SCAN_CARGO)){
-            info.addPara("Ability to scan cargo in systems, where %s have any holdings!", initPad,Misc.getTooltipTitleAndLightHighlightColor(),Color.ORANGE,""+data.getFaction().getDisplayName());
+        if(rank.getTarrifReduciton()>0){
+            info.addPara("Reduced tariff for goods by %s", initPad,Misc.getTooltipTitleAndLightHighlightColor(),Color.ORANGE,""+(int)rank.getTarrifReduciton()+"%");
+        }
+        if(rank.hasTag(AoTDRankTags.ACCESS_TO_FACTION_BLUEPRINTS)&&Global.getSettings().getModManager().isModEnabled("aotd_vok")){
+            if(GPManager.isEnabled){
+                info.addPara("Access to blueprints of weapons, fighters and ships that are under possession of %s", initPad,Misc.getTooltipTitleAndLightHighlightColor(),Color.ORANGE,""+data.getFaction().getDisplayName());
+            }
         }
         if(rank.hasTag(AoTDRankTags.FREE_STORAGE)){
             info.addPara("Free storage on all planets belonging to %s", initPad,Misc.getTooltipTitleAndLightHighlightColor(),Color.ORANGE,""+data.getFaction().getDisplayName());
@@ -567,14 +573,18 @@ public class AoTDCommIntelPlugin extends BaseEventIntel implements EconomyTickLi
     }
 
     public boolean canColonize() {
+        if(QoLMisc.isInSpaceofCommisionedFaction())return false;
+        return canBuyMarket();
+
+    }
+    //Function made to handle buying markets in Nexerelin
+    public boolean canBuyMarket() {
 
         RankData data = getRankForID(getRank());
-        if(QoLMisc.isInSpaceofCommisionedFaction())return false;
         if(data.hasTag(AoTDRankTags.NONRESTRICTIVE_COLONIZATION))return true;
         return getAmountOfCurrentColonies() < data.getAmountOfColoniesAbleToColonize();
 
     }
-
     public boolean canResign() {
         return getCurrentRankData().isLeavingAnOption();
     }

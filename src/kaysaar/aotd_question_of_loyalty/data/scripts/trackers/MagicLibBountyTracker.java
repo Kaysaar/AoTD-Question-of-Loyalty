@@ -28,6 +28,7 @@ public class MagicLibBountyTracker implements EveryFrameScript {
         List<String> alreadyDoneQuests = getAlreadyDoneFromMemory();
         for (String completedBounty : MagicBountyCoordinator.getInstance().getCompletedBounties()) {
             if(alreadyDoneQuests.contains(completedBounty))continue;
+            if(MagicBountyLoader.BOUNTIES.get(completedBounty)==null)continue;
             if(haveSucceededBounty(MagicBountyLoader.BOUNTIES.get(completedBounty).job_memKey)){
                 if(QoLMisc.isCommissionedBy(MagicBountyLoader.BOUNTIES.get(completedBounty).job_forFaction)){
                     int factor = 10000;

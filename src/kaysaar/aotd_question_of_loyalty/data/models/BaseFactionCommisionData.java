@@ -21,7 +21,9 @@ public class BaseFactionCommisionData {
 
     public AoTDCommIntelPlugin getPlugin(){
         try {
-            return (AoTDCommIntelPlugin) Global.getSettings().getScriptClassLoader().loadClass(intelPlugin).newInstance();
+            AoTDCommIntelPlugin plugin = (AoTDCommIntelPlugin) Global.getSettings().getScriptClassLoader().loadClass(intelPlugin).newInstance();
+            plugin.setData(this);
+            return plugin;
         }
         catch (Exception e ){
             throw new RuntimeException(e);

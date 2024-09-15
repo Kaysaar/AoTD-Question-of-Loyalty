@@ -187,7 +187,7 @@ public class AoTDCommision extends Commission {
     protected void accept() {
         if (Misc.getCommissionFactionId() == null) {
             BaseFactionCommisionData data = AoTDCommissionDataManager.getInstance().getCommisionData(faction.getId());
-            if(data==null){
+            if (data == null) {
                 data = BaseFactionCommisionData.getDefaultCommisionData(faction.getId());
             }
             AoTDCommIntelPlugin intel = data.getPlugin();
@@ -215,56 +215,9 @@ public class AoTDCommision extends Commission {
 
     @Override
     protected void printInfo() {
+
         TooltipMakerAPI info = dialog.getTextPanel().beginTooltip();
-
-        Color h = Misc.getHighlightColor();
-        Color g = Misc.getGrayColor();
-        float pad = 3f;
-        float opad = 10f;
-        FactionCommissionIntel temp = new FactionCommissionIntel(faction);
-
-        info.setParaSmallInsignia();
-        BaseFactionCommisionData daten = AoTDCommissionDataManager.getInstance().getCommisionData(faction.getId());
-        if (Misc.getPlayerMarkets(true).isEmpty()||daten.getFirstOfficialRank()==null) {
-
-            info.addPara("Given current circumstances you will start with rank of %s and monthly salary of %s", 5f, Color.ORANGE, daten.getRankFromString(daten.getFirstDefRank()).name, Misc.getDGSCredits(daten.getRankFromString(daten.getFirstDefRank()).salary));
-
-        } else {
-            info.addPara("Given current circumstances you will start with rank of %s and monthly salary of %s", 5f, Color.ORANGE, daten.getRankFromString(daten.getFirstOfficialRank()).name, Misc.getDGSCredits(daten.getRankFromString(daten.getFirstOfficialRank()).salary));
-            info.addPara("We propose such rank due to your colonial holdings", Color.ORANGE, 5f);
-        }
-        info.addSectionHeading("Commission Progression", Alignment.MID, 10f);
-        info.setParaFontDefault();
-        info.addPara("To progress through our ranks you need to prove a worthy asset to our faction.You can do by:", 10f);
-        info.addPara("Selling AI Cores to our faction", 3f);
-        if(Global.getSettings().getModManager().isModEnabled("aotd_vok")){
-            info.addPara("Selling Research databanks to our faction", 3f);
-
-        }
-        info.addPara("Completing survey missions and analyze missions",3f);
-//        info.addPara("Selling colony items to our faction",3f);
-        info.addPara("Completing faction bounties", 3f);
-        info.addPara("Catching smugglers within faction's star systems", 3f);
-        info.addPara("Making profitable trades with our faction", 3f);
-
-        info.setParaSmallInsignia();
-        List<FactionAPI> hostile = temp.getHostileFactions();
-        if (hostile.isEmpty()) {
-            info.addPara(Misc.ucFirst(faction.getDisplayNameWithArticle()) + " is not currently hostile to any major factions.", 0f);
-        } else {
-            info.addPara(Misc.ucFirst(faction.getDisplayNameWithArticle()) + " is currently hostile to:", opad);
-
-            info.setParaFontDefault();
-
-            info.setBulletedListMode(BaseIntelPlugin.INDENT);
-            float initPad = opad;
-            for (FactionAPI other : hostile) {
-                info.addPara(Misc.ucFirst(other.getDisplayName()), other.getBaseUIColor(), initPad);
-                initPad = 3f;
-            }
-            info.setBulletedListMode(null);
-        }
-        info.addPara("Should you prove to be burden to our faction, we will terminate this contract", Misc.getNegativeHighlightColor(), 10f);
+        AoTDCommissionDataManager.getInstance().getCommisionData(faction.getId()).getPlugin().printInfo(info);
         dialog.getTextPanel().addTooltip();
     }
 
@@ -275,7 +228,7 @@ public class AoTDCommision extends Commission {
     }
 
     public boolean isSteppingIntoNoReturn() {
-        return !Misc.getPlayerMarkets(true).isEmpty()&&AoTDCommissionDataManager.getInstance().getCommisionData(faction.getId()).getFirstOfficialRank()!=null;
+        return AoTDCommissionDataManager.getInstance().getCommisionData(faction.getId()).getPlugin().isSteppingIntoNoReturn();
     }
 
     public boolean canColonize() {

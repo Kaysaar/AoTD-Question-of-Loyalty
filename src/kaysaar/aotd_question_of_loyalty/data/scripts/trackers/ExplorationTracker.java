@@ -55,9 +55,14 @@ public class ExplorationTracker implements EveryFrameScript {
                 if(!isBaseMissionPresent(bounty)){
                     entityMissionIntels.add(bounty);
                     if(bounty.getMissionState().equals(BaseMissionIntel.MissionState.COMPLETED)){
-                        int reward = (int) ReflectionUtilis.getPrivateVariable("reward",bounty);
-                        int points  = (int) (reward /2000);
-                        AoTDCommIntelPlugin.get().addFactor(new ExplorationCompletionFactor(points));
+                        try {
+                            int reward = (int) ReflectionUtilis.getPrivateVariable("reward",bounty);
+                            int points  = (int) (reward /2000);
+                            AoTDCommIntelPlugin.get().addFactor(new ExplorationCompletionFactor(points));
+                        } catch (Exception e) {
+
+                        }
+
                     }
 
                 }
@@ -94,10 +99,16 @@ public class ExplorationTracker implements EveryFrameScript {
                 if(!isSurveyMissionPresent(bounty)){
                     surveyPlanetMissionIntels.add(bounty);
                     if(bounty.getMissionState().equals(BaseMissionIntel.MissionState.COMPLETED)){
-                        int reward = (int) ReflectionUtilis.getPrivateVariable("reward",bounty);
-                        int points  = (int) (reward /2000);
-                        AoTDCommIntelPlugin.get().addFactor(new ExplorationCompletionFactor(points));
+                        try {
+                            int reward = (int) ReflectionUtilis.getPrivateVariable("reward",bounty);
+                            int points  = (int) (reward /2000);
+                            AoTDCommIntelPlugin.get().addFactor(new ExplorationCompletionFactor(points));
+                        } catch (Exception e) {
+
+                        }
+
                     }
+
 //                    if(bounty.getMissionState().equals(BaseMissionIntel.MissionState.FAILED)){
 //                        int reward = (int) ReflectionUtilis.getPrivateVariable("reward",bounty);
 //                        int points  = (int) (reward /15000);

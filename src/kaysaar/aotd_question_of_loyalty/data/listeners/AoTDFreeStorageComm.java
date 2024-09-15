@@ -20,12 +20,12 @@ public class AoTDFreeStorageComm implements EconomyTickListener {
     public void reportEconomyTick(int iterIndex) {
         float numIter = Global.getSettings().getFloat("economyIterPerMonth");
         float f = 1f / numIter;
-        if(QoLMisc.isCommissioned()){
+        if(QoLMisc.isCommissioned()&&AoTDCommIntelPlugin.get()!=null){
 
             for (MarketAPI factionMarket : Misc.getFactionMarkets(Misc.getCommissionFaction())) {
                 if(factionMarket.hasSubmarket(Submarkets.SUBMARKET_STORAGE)){
                     StoragePlugin plugin = (StoragePlugin) factionMarket.getSubmarket(Submarkets.SUBMARKET_STORAGE).getPlugin();
-                    if(AoTDCommIntelPlugin.get().getCurrentRankData().hasTag(AoTDRankTags.FREE_STORAGE)){
+                    if(AoTDCommIntelPlugin.get().getCurrentRankData()!=null&&AoTDCommIntelPlugin.get().getCurrentRankData().hasTag(AoTDRankTags.FREE_STORAGE)){
                         setSubmarketPayment(factionMarket, plugin);
                     }
                     else{

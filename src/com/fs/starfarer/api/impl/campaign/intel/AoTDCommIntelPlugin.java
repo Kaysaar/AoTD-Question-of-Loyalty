@@ -154,6 +154,7 @@ public class AoTDCommIntelPlugin extends BaseEventIntel implements EconomyTickLi
         fleetNode.tooltipCreator = report.getMonthlyReportTooltip();
         final FactionAPI faction = data.getFaction();
         float stipend = getCurrentRankData().salary;
+
         MonthlyReport.FDNode stipendNode = report.getNode(fleetNode, "node_id_stipend_" + data.getFaction().getId());
         stipendNode.income += stipend * f;
 
@@ -652,6 +653,18 @@ public class AoTDCommIntelPlugin extends BaseEventIntel implements EconomyTickLi
     protected void advanceImpl(float amount) {
         if (!commisionValid) return;
         super.advanceImpl(amount);
+        Iterator<AoTDCommIntelPlugin>listeners = Global.getSector().getListenerManager().getListeners(AoTDCommIntelPlugin.class).iterator();
+        boolean foundAlreadyOne=false;
+        while (listeners.hasNext()) {
+            AoTDCommIntelPlugin plugin = listeners.next();
+            if(plugin==this&&!foundAlreadyOne){
+                foundAlreadyOne = true;
+                continue;
+            }
+            listeners.remove();
+
+
+        }
         if (QoLMisc.isCommissioned()) {
             if (data != null && data.ranks != null && getCurrentRankData() != null) {
                 if (!isDone()) {

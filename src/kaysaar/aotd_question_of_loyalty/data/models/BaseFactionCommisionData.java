@@ -3,6 +3,7 @@ package kaysaar.aotd_question_of_loyalty.data.models;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.impl.campaign.intel.AoTDCommIntelPlugin;
+import kaysaar.aotd_question_of_loyalty.data.misc.QoLMisc;
 import kaysaar.aotd_question_of_loyalty.data.scripts.commision.AoTDCommissionDataManager;
 import kaysaar.aotd_question_of_loyalty.data.tags.AoTDRankTags;
 
@@ -24,6 +25,8 @@ public class BaseFactionCommisionData {
         try {
             AoTDCommIntelPlugin plugin = (AoTDCommIntelPlugin) Global.getSettings().getScriptClassLoader().loadClass(intelPlugin).newInstance();
             plugin.setData(this);
+            Global.getSector().getListenerManager().removeListener(plugin);
+            Global.getSector().removeScript(plugin);
             return plugin;
         }
         catch (Exception e ){

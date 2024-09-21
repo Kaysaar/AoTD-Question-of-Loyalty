@@ -2,6 +2,7 @@ package kaysaar.aotd_question_of_loyalty.data.plugins;
 
 
 import com.fs.starfarer.api.BaseModPlugin;
+import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
 import com.fs.starfarer.api.impl.campaign.intel.AoTDCommIntelPlugin;
@@ -21,7 +22,7 @@ import kaysaar.aotd_question_of_loyalty.data.scripts.trackers.DeliveryTracker;
 import kaysaar.aotd_question_of_loyalty.data.scripts.trackers.ExplorationTracker;
 import kaysaar.aotd_question_of_loyalty.data.scripts.trackers.MagicLibBountyTracker;
 
-
+import java.util.Iterator;
 
 
 public class AotDQoLPlugin extends BaseModPlugin {
@@ -53,6 +54,16 @@ public class AotDQoLPlugin extends BaseModPlugin {
         Global.getSector().addTransientScript(new BlockCommisionHostileActions());
         Global.getSector().addTransientListener(new AoTDDestructionOfEnemiesTracker());
         Global.getSector().addTransientScript(new AoTDIgnoreTurningOffTransponder());
+        Iterator < EveryFrameScript> iter = Global.getSector().getScripts().iterator();
+        while (iter.hasNext()) {
+            EveryFrameScript next = iter.next();
+            if(next instanceof AoTDCommIntelPlugin){
+                if(AoTDCommIntelPlugin.get()!=null&&next.equals(AoTDCommIntelPlugin.get())){
+                    continue;
+                }
+                iter.remove();
+            }
+        }
         if (Global.getSettings().getModManager().isModEnabled("MagicLib")) {
             Global.getSector().addTransientScript(new MagicLibBountyTracker());
         }

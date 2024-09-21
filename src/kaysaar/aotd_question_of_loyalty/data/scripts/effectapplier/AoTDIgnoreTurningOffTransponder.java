@@ -19,17 +19,16 @@ public class AoTDIgnoreTurningOffTransponder implements EveryFrameScript {
 
     @Override
     public void advance(float amount) {
-        if(QoLMisc.isCommissioned()){
-            if(Global.getSector().getPlayerFleet().getStarSystem()!=null){
+        if (QoLMisc.isCommissioned()) {
+            if (Global.getSector().getPlayerFleet().getStarSystem() != null) {
                 for (CampaignFleetAPI fleet : Global.getSector().getPlayerFleet().getStarSystem().getFleets()) {
-                    if(Misc.getCommissionFactionId().equals(fleet.getFaction().getId())){
-                        if(Global.getSector().getPlayerFleet().isTransponderOn()||Misc.isPermaKnowsWhoPlayerIs(fleet)){
-                            fleet.getMemory().set("$patrolAllowTOff",true,10);
-                            fleet.getMemory().set("$sawPlayerWithTOffCount",0);
-                            fleet.getMemory().unset("$sawPlayerWithTOffCount");
-                            fleet.getMemory().unset("$cargoScanConv");
-                            fleet.getMemory().unset("$smugglingScanComplete");
-                        }
+                    if (Misc.getCommissionFactionId().equals(fleet.getFaction().getId())) {
+                        fleet.getMemory().set("$patrolAllowTOff", true, 100);
+                        fleet.getMemory().set("$sawPlayerWithTOffCount", 0);
+                        fleet.getMemory().unset("$sawPlayerWithTOffCount");
+                        fleet.getMemory().unset("$cargoScanConv");
+                        fleet.getMemory().unset("$smugglingScanComplete");
+
 
                     }
                 }

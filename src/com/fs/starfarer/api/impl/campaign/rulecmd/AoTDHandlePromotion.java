@@ -7,6 +7,7 @@ import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.impl.campaign.intel.AoTDCommIntelPlugin;
 import com.fs.starfarer.api.util.Misc;
 import kaysaar.aotd_question_of_loyalty.data.models.RankData;
+import kaysaar.aotd_question_of_loyalty.data.scripts.commision.AoTDCommissionUtil;
 
 import java.awt.*;
 import java.util.List;
@@ -74,6 +75,7 @@ public class AoTDHandlePromotion extends BaseCommandPlugin {
         }
         if (command.equals("promote")) {
             AoTDCommIntelPlugin.get().setRank(id);
+            AoTDCommissionUtil.reportPlayerGotNewRank(AoTDCommIntelPlugin.get().getCurrentRankData());
         }
         return true;
     }

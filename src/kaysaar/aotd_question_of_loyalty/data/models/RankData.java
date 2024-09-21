@@ -33,7 +33,8 @@ public class RankData {
     }
 
     public boolean isLeavingAnOption() {
-        return isLeavingAnOption;
+        //For now I am not implementing secession mechanics so it will be always true
+        return true;
     }
 
     public void setLeavingAnOption(boolean leavingAnOption) {

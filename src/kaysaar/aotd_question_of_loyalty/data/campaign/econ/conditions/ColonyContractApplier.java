@@ -9,7 +9,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
-public class BaseColonyContractCondiiton implements MarketConditionPlugin {
+public class ColonyContractApplier implements MarketConditionPlugin {
     @Override
     public void advance(float amount) {
 

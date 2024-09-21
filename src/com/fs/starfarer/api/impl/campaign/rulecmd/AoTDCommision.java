@@ -1,10 +1,7 @@
 package com.fs.starfarer.api.impl.campaign.rulecmd;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.FactionAPI;
-import com.fs.starfarer.api.campaign.InteractionDialogAPI;
-import com.fs.starfarer.api.campaign.ReputationActionResponsePlugin;
-import com.fs.starfarer.api.campaign.SectorEntityToken;
+import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -13,16 +10,15 @@ import com.fs.starfarer.api.impl.campaign.ids.Entities;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.impl.campaign.intel.AoTDCommIntelPlugin;
 
-import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
 import com.fs.starfarer.api.impl.campaign.intel.FactionCommissionIntel;
 import com.fs.starfarer.api.impl.campaign.rulecmd.missions.Commission;
-import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import kaysaar.aotd_question_of_loyalty.data.misc.QoLMisc;
 import kaysaar.aotd_question_of_loyalty.data.models.BaseFactionCommisionData;
+import kaysaar.aotd_question_of_loyalty.data.scripts.commision.AoTDCommissionUtil;
 import kaysaar.aotd_question_of_loyalty.data.scripts.commision.AoTDCommissionDataManager;
 
-import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
@@ -48,8 +44,7 @@ public class AoTDCommision extends Commission {
         text = dialog.getTextPanel();
         options = dialog.getOptionPanel();
 
-        playerFleet = Global.getSector().getPlayerFleet();
-        playerCargo = playerFleet.getCargo();
+        playerFleet = Global.getSector().getPlayerFleet();;
 
         playerFaction = Global.getSector().getPlayerFaction();
         entityFaction = entity.getFaction();
@@ -67,7 +62,19 @@ public class AoTDCommision extends Commission {
             printRequirements();
         } else if (command.equals("playerMeetsCriteria")) {
             return playerMeetsCriteria();
-        } else if (command.equals("printInfo")) {
+        }
+        else if (command.equals("isCommissionedByPersonFaction")) {
+            return QoLMisc.isCommissionedBy(faction.getId());
+        }
+        else if (command.equals("isStillWaiting")) {
+            return playerFleet.getMemory().is("$aotd_wait_for_resupply",true);
+
+        }
+        else if (command.equals("printResponse")) {
+           printResponseForWantingToResupply();
+
+        }
+        else if (command.equals("printInfo")) {
             printInfo();
         } else if (command.equals("hasFactionCommission")) {
             return hasFactionCommission();
@@ -195,8 +202,20 @@ public class AoTDCommision extends Commission {
             intel.sendUpdate(FactionCommissionIntel.UPDATE_PARAM_ACCEPTED, dialog.getTextPanel());
             Global.getSector().getCharacterData().getMemoryWithoutUpdate().set(MemFlags.FCM_FACTION, faction.getId());
             intel.makeRepChanges(dialog);
+            AoTDCommissionUtil.reportPlayerGotNewRank(intel.getCurrentRankData());
 
         }
+    }
+    public void printResponseForWantingToResupply(){
+        getPluginForFaction().printSuppliesForTaking(dialog);
+    }
+    public void giveSupplies() {
+
+    }
+
+    @Override
+    protected boolean playerMeetsCriteria() {
+        return getPluginForFaction().doesPlayerMeetCriteriaForCommision();
     }
 
     @Override
@@ -210,6 +229,9 @@ public class AoTDCommision extends Commission {
 
         AoTDCommIntelPlugin.get().unset();
         AoTDCommIntelPlugin.get().endCommision(dialog);
+        for (MarketAPI playerMarket : Misc.getPlayerMarkets(true)) {
+
+        }
         Global.getSector().getCharacterData().getMemory().unset(MemFlags.FCM_FACTION);
     }
 
@@ -217,7 +239,7 @@ public class AoTDCommision extends Commission {
     protected void printInfo() {
 
         TooltipMakerAPI info = dialog.getTextPanel().beginTooltip();
-        AoTDCommissionDataManager.getInstance().getCommisionData(faction.getId()).getPlugin().printInfo(info);
+        getPluginForFaction().printInfo(info);
         dialog.getTextPanel().addTooltip();
     }
 
@@ -228,12 +250,19 @@ public class AoTDCommision extends Commission {
     }
 
     public boolean isSteppingIntoNoReturn() {
-        return AoTDCommissionDataManager.getInstance().getCommisionData(faction.getId()).getPlugin().isSteppingIntoNoReturn();
+        return getPluginForFaction().isSteppingIntoNoReturn();
     }
-
+    public AoTDCommIntelPlugin getPluginForFaction(){
+        return AoTDCommissionDataManager.getInstance().getCommisionData(faction.getId()).getPlugin();
+    }
     public boolean canColonize() {
         if (AoTDCommIntelPlugin.get() == null) return true;
         return AoTDCommIntelPlugin.get().canColonize();
 
+    }
+
+    @Override
+    protected void printRequirements() {
+        getPluginForFaction().printRequirements(dialog);
     }
 }

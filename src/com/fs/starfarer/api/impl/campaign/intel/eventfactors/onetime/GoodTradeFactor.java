@@ -1,5 +1,6 @@
 package com.fs.starfarer.api.impl.campaign.intel.eventfactors.onetime;
 
+import com.fs.starfarer.api.campaign.CoreUITabId;
 import com.fs.starfarer.api.impl.campaign.intel.events.BaseEventIntel;
 import com.fs.starfarer.api.impl.campaign.intel.events.BaseFactorTooltip;
 import com.fs.starfarer.api.impl.campaign.intel.events.BaseOneTimeFactor;

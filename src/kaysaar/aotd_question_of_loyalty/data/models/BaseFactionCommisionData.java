@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.impl.campaign.intel.AoTDCommIntelPlugin;
 import kaysaar.aotd_question_of_loyalty.data.scripts.commision.AoTDCommissionDataManager;
+import kaysaar.aotd_question_of_loyalty.data.tags.AoTDRankTags;
 
 import java.util.*;
 
@@ -87,6 +88,21 @@ public class BaseFactionCommisionData {
             }
         }
         return null;
+    }
+    public RankData getAdequateRankForColonies(int colonyNumber){
+        RankData firstNonRestrictiveRank = null;
+        for (RankData rank : ranks) {
+            if(rank.hasTag(AoTDRankTags.NONRESTRICTIVE_COLONIZATION)){
+                firstNonRestrictiveRank = rank;
+            }
+            if(rank.getAmountOfColoniesAbleToColonize()>=colonyNumber){
+
+                return rank;
+            }
+        }
+
+        return firstNonRestrictiveRank;
+
     }
     public RankData getRankFromString(String rank){
         for (RankData rankData : ranks) {

@@ -1,9 +1,7 @@
 package kaysaar.aotd_question_of_loyalty.data.misc;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.EngagementResultForFleetAPI;
-import com.fs.starfarer.api.campaign.SectorEntityToken;
+import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.util.Misc;
 
@@ -63,6 +61,13 @@ public class QoLMisc {
 
         }
         return false;
+    }
+    public static int getFreeSpaceAvailable(CargoAPI cargo){
+        int total = (int) cargo.getMaxCapacity();
+        for (CargoStackAPI cargoStackAPI : cargo.getStacksCopy()) {
+            total-= (int) cargoStackAPI.getCargoSpace();
+        }
+        return total;
     }
     public static boolean isCommissioned(){
         return isStringValid(Misc.getCommissionFactionId(),null);

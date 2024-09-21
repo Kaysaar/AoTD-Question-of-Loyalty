@@ -7,12 +7,13 @@ import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
 import com.fs.starfarer.api.impl.campaign.intel.AoTDCommIntelPlugin;
 import com.fs.starfarer.api.impl.campaign.intel.events.HostileActivityEventIntel;
 import com.fs.starfarer.api.impl.campaign.intel.events.HostileActivityManager;
+import kaysaar.aotd_question_of_loyalty.data.listeners.AoTDColonyCrisisInserter;
 import kaysaar.aotd_question_of_loyalty.data.listeners.AoTDDestructionOfEnemiesTracker;
 import kaysaar.aotd_question_of_loyalty.data.listeners.AoTDFreeStorageComm;
 import kaysaar.aotd_question_of_loyalty.data.listeners.AoTDTransactionListener;
-import kaysaar.aotd_question_of_loyalty.data.scripts.AoTDColonyCrisisManager;
 import kaysaar.aotd_question_of_loyalty.data.scripts.AoTDDealWithNexerlinComm;
 import kaysaar.aotd_question_of_loyalty.data.scripts.commision.AoTDCommissionDataManager;
+import kaysaar.aotd_question_of_loyalty.data.scripts.effectapplier.AoTDIgnoreTurningOffTransponder;
 import kaysaar.aotd_question_of_loyalty.data.scripts.effectapplier.AoTDSharedSensorLink;
 import kaysaar.aotd_question_of_loyalty.data.scripts.rulesInterceptor.*;
 import kaysaar.aotd_question_of_loyalty.data.scripts.trackers.BountyTracker;
@@ -20,7 +21,7 @@ import kaysaar.aotd_question_of_loyalty.data.scripts.trackers.DeliveryTracker;
 import kaysaar.aotd_question_of_loyalty.data.scripts.trackers.ExplorationTracker;
 import kaysaar.aotd_question_of_loyalty.data.scripts.trackers.MagicLibBountyTracker;
 
-//import data.colonyevents.ui.ExampleIDP;
+
 
 
 public class AotDQoLPlugin extends BaseModPlugin {
@@ -31,16 +32,7 @@ public class AotDQoLPlugin extends BaseModPlugin {
         AoTDCommissionDataManager.getInstance();
     }
 
-    @Override
-    public void onNewGameAfterProcGen() {
-        if (!Global.getSector().hasScript(AoTDColonyCrisisManager.class)) {
-            Global.getSector().removeScriptsOfClass(HostileActivityManager.class);
-            if (HostileActivityEventIntel.get() != null) {
-                HostileActivityEventIntel.get().endImmediately();
-            }
-            Global.getSector().addScript(new AoTDColonyCrisisManager());
-        }
-    }
+
 
     @Override
     public void onGameLoad(boolean newGame) {
@@ -48,6 +40,7 @@ public class AotDQoLPlugin extends BaseModPlugin {
         ListenerManagerAPI listener = Global.getSector().getListenerManager();
         listener.addListener(new AoTDFreeStorageComm(), true);
         listener.addListener(new AoTDTransactionListener(), true);
+        listener.addListener(new AoTDColonyCrisisInserter(),true);
         Global.getSector().addTransientScript(new AICoreReplaceScript());
         Global.getSector().addTransientScript(new CommisionReplaceScript());
         Global.getSector().addTransientScript(new ResignCommsionReplaceScript());
@@ -59,6 +52,7 @@ public class AotDQoLPlugin extends BaseModPlugin {
         Global.getSector().addTransientScript(new AoTDSharedSensorLink());
         Global.getSector().addTransientScript(new BlockCommisionHostileActions());
         Global.getSector().addTransientListener(new AoTDDestructionOfEnemiesTracker());
+        Global.getSector().addTransientScript(new AoTDIgnoreTurningOffTransponder());
         if (Global.getSettings().getModManager().isModEnabled("MagicLib")) {
             Global.getSector().addTransientScript(new MagicLibBountyTracker());
         }

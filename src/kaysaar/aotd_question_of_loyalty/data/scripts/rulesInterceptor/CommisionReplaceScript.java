@@ -3,6 +3,9 @@ package kaysaar.aotd_question_of_loyalty.data.scripts.rulesInterceptor;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.impl.campaign.intel.AoTDCommIntelPlugin;
+import com.fs.starfarer.api.impl.campaign.intel.AoTDHostileActivity;
+import com.fs.starfarer.api.impl.campaign.intel.events.HostileActivityEventIntel;
+import com.fs.starfarer.api.impl.campaign.intel.events.HostileActivityManager;
 import kaysaar.aotd_question_of_loyalty.data.misc.QoLMisc;
 import org.lwjgl.input.Keyboard;
 

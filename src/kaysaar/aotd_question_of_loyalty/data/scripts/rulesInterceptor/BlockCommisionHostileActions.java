@@ -61,7 +61,7 @@ public class BlockCommisionHostileActions implements EveryFrameScript {
                     });
 
                 }
-                if(dialog.getOptionPanel().hasOption("nex_buyColony")&& !AoTDCommIntelPlugin.get().canBuyMarket()){
+                if(dialog.getOptionPanel().hasOption("nex_buyColony")&& !AoTDCommIntelPlugin.get().canBuyMarket(AoTDCommIntelPlugin.get().getCurrentRankData().id)){
                     dialog.getOptionPanel().setEnabled("nex_buyColony",false);
                     dialog.getOptionPanel().addOptionTooltipAppender("nex_buyColony", new OptionPanelAPI.OptionTooltipCreator() {
                         @Override
@@ -80,6 +80,9 @@ public class BlockCommisionHostileActions implements EveryFrameScript {
                         }
                     });
 
+                }
+                if(dialog.getOptionPanel().hasOption("bqfs_askForSupplies")){
+                    dialog.getOptionPanel().removeOption("bqfs_askForSupplies");
                 }
             }
 

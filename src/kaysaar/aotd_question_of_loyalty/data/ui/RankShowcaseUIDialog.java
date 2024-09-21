@@ -10,6 +10,7 @@ import com.fs.starfarer.api.impl.campaign.intel.AoTDCommIntelPlugin;
 import com.fs.starfarer.api.impl.campaign.rulecmd.FireBest;
 import com.fs.starfarer.api.ui.*;
 import com.fs.starfarer.api.util.Misc;
+import kaysaar.aotd_question_of_loyalty.data.scripts.commision.AoTDCommissionUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -85,6 +86,7 @@ public class RankShowcaseUIDialog implements CustomDialogDelegate {
     @Override
     public void customDialogConfirm() {
         Global.getSector().getMemory().set("$aotd_rank_temp",selected,0.1f);
+        AoTDCommissionUtil.reportPlayerGotNewRank(AoTDCommIntelPlugin.get().getCurrentRankData());
         FireBest.fire(null, dialog, memoryMap, "AotdPromotion");
     }
     @Override

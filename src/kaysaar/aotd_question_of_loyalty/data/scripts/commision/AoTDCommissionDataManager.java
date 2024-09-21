@@ -15,16 +15,42 @@ public class AoTDCommissionDataManager {
     private static AoTDCommissionDataManager instance;
     private HashMap<String,RankData>availableRanks;
     private HashMap<String, BaseFactionCommisionData> commissionData;
-
+    transient ArrayList<Object> listeners;
 
     public static AoTDCommissionDataManager getInstance(){
        if(instance==null){
            instance = new AoTDCommissionDataManager();
            instance.initalizeRanks();
            instance.initalizeData();
+           instance.listeners = new ArrayList<>();
+
        }
        return instance;
     }
+    public boolean hasListenerOfClass(Class<?> c){
+        for (Object listener : listeners) {
+            if(listener.getClass().equals(c)){
+                return true;
+            }
+        }
+        return false;
+    }
+    public <T> List<T> getListeners(Class<T> c) {
+        List<T> toReturn = new ArrayList<>();
+        for (Object listener : listeners) {
+            if (c.isInstance(listener)) {
+                toReturn.add(c.cast(listener));
+            }
+        }
+        return toReturn;
+    }
+    public void addListener(Object listener){
+        listeners.add(listener);
+    }
+
+
+
+
     public void initalizeRanks(){
         availableRanks = new HashMap<>();
         try {

@@ -1,17 +1,13 @@
 package com.fs.starfarer.api.impl.campaign.intel;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.FactionAPI;
-import com.fs.starfarer.api.campaign.InteractionDialogAPI;
-import com.fs.starfarer.api.campaign.ReputationActionResponsePlugin;
-import com.fs.starfarer.api.campaign.TextPanelAPI;
+import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.MonthlyReport;
 import com.fs.starfarer.api.campaign.listeners.EconomyTickListener;
-import com.fs.starfarer.api.campaign.listeners.ListenerUtil;
 import com.fs.starfarer.api.impl.campaign.CoreReputationPlugin;
-import com.fs.starfarer.api.impl.campaign.ids.Factions;
+import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.impl.campaign.intel.eventfactors.monthly.MonthlyObligationFactor;
 import com.fs.starfarer.api.impl.campaign.intel.events.BaseEventIntel;
 import com.fs.starfarer.api.impl.campaign.intel.events.EventFactor;
@@ -24,6 +20,7 @@ import kaysaar.aotd_question_of_loyalty.data.listeners.AoTDFreeStorageComm;
 import kaysaar.aotd_question_of_loyalty.data.misc.QoLMisc;
 import kaysaar.aotd_question_of_loyalty.data.models.BaseFactionCommisionData;
 import kaysaar.aotd_question_of_loyalty.data.models.RankData;
+import kaysaar.aotd_question_of_loyalty.data.scripts.commision.AoTDCommissionUtil;
 import kaysaar.aotd_question_of_loyalty.data.scripts.commision.AoTDCommissionDataManager;
 import kaysaar.aotd_question_of_loyalty.data.tags.AoTDCommisionTags;
 import kaysaar.aotd_question_of_loyalty.data.tags.AoTDRankTags;
@@ -32,6 +29,8 @@ import kaysaar.aotd_question_of_loyalty.data.ui.RankShowcaseUIDialog;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+
+import static com.fs.starfarer.api.impl.campaign.rulecmd.missions.Commission.COMMISSION_REQ;
 
 public class AoTDCommIntelPlugin extends BaseEventIntel implements EconomyTickListener {
     BaseFactionCommisionData data;
@@ -48,17 +47,20 @@ public class AoTDCommIntelPlugin extends BaseEventIntel implements EconomyTickLi
     public void setRank(String id) {
         data.getFaction().getMemory().set(RANK_KEY, id);
     }
+
     protected LinkedHashMap<String, FactionCommissionIntel.RepChangeData> repChanges = new LinkedHashMap<String, FactionCommissionIntel.RepChangeData>();
+
     public void unset() {
         data.getFaction().getMemory().unset(RANK_KEY);
     }
-    public void updateData(){
+
+    public void updateData() {
         String factionId = data.factionID;
         data = AoTDCommissionDataManager.getInstance().getCommisionData(factionId);
         boolean timeToBreak = false;
         for (EventStageData stage : stages) {
-            if(timeToBreak)break;
-            if(stage.id.equals(getRank()))timeToBreak = true;
+            if (timeToBreak) break;
+            if (stage.id.equals(getRank())) timeToBreak = true;
             stage.wasEverReached = true;
         }
     }
@@ -81,7 +83,7 @@ public class AoTDCommIntelPlugin extends BaseEventIntel implements EconomyTickLi
         return data.getFaction();
     }
 
-    public  void printInfo(TooltipMakerAPI info){
+    public void printInfo(TooltipMakerAPI info) {
         Color h = Misc.getHighlightColor();
         Color g = Misc.getGrayColor();
         float pad = 3f;
@@ -91,23 +93,23 @@ public class AoTDCommIntelPlugin extends BaseEventIntel implements EconomyTickLi
 
         info.setParaSmallInsignia();
         BaseFactionCommisionData daten = AoTDCommissionDataManager.getInstance().getCommisionData(faction.getId());
-        if (Misc.getPlayerMarkets(true).isEmpty()||daten.getFirstOfficialRank()==null) {
+        if (Misc.getPlayerMarkets(true).isEmpty() || data.hasTag(AoTDCommisionTags.DOES_NOT_CARE_ABOUT_PLAYER_COLONIES)) {
 
             info.addPara("Given current circumstances you will start with rank of %s and monthly salary of %s", 5f, Color.ORANGE, daten.getRankFromString(daten.getFirstDefRank()).name, Misc.getDGSCredits(daten.getRankFromString(daten.getFirstDefRank()).salary));
 
         } else {
-            info.addPara("Given current circumstances you will start with rank of %s and monthly salary of %s", 5f, Color.ORANGE, daten.getRankFromString(daten.getFirstOfficialRank()).name, Misc.getDGSCredits(daten.getRankFromString(daten.getFirstOfficialRank()).salary));
+            info.addPara("Given current circumstances you will start with rank of %s and monthly salary of %s", 5f, Color.ORANGE, daten.getAdequateRankForColonies(Misc.getPlayerMarkets(true).size()).name, Misc.getDGSCredits(daten.getAdequateRankForColonies(Misc.getPlayerMarkets(true).size()).salary));
             info.addPara("We propose such rank due to your colonial holdings", Color.ORANGE, 5f);
         }
         info.addSectionHeading("Commission Progression", Alignment.MID, 10f);
         info.setParaFontDefault();
         info.addPara("To progress through our ranks you need to prove a worthy asset to our faction.You can do by:", 10f);
         info.addPara("Selling AI Cores to our faction", 3f);
-        if(Global.getSettings().getModManager().isModEnabled("aotd_vok")){
+        if (Global.getSettings().getModManager().isModEnabled("aotd_vok")) {
             info.addPara("Selling Research databanks to our faction", 3f);
 
         }
-        info.addPara("Completing survey missions and analyze missions",3f);
+        info.addPara("Completing survey missions and analyze missions", 3f);
 //        info.addPara("Selling colony items to our faction",3f);
         info.addPara("Completing faction bounties", 3f);
         info.addPara("Catching smugglers within faction's star systems", 3f);
@@ -132,8 +134,9 @@ public class AoTDCommIntelPlugin extends BaseEventIntel implements EconomyTickLi
         }
         info.addPara("Should you prove to be burden to our faction, we will terminate this contract", Misc.getNegativeHighlightColor(), 10f);
     }
-    public boolean isSteppingIntoNoReturn(){
-        return !Misc.getPlayerMarkets(true).isEmpty()&&data.getFirstOfficialRank()!=null;
+
+    public boolean isSteppingIntoNoReturn() {
+        return !Misc.getPlayerMarkets(true).isEmpty() && !data.hasTag(AoTDCommisionTags.DOES_NOT_CARE_ABOUT_PLAYER_COLONIES);
     }
 
     @Override
@@ -152,7 +155,7 @@ public class AoTDCommIntelPlugin extends BaseEventIntel implements EconomyTickLi
         final FactionAPI faction = data.getFaction();
         float stipend = getCurrentRankData().salary;
         MonthlyReport.FDNode stipendNode = report.getNode(fleetNode, "node_id_stipend_" + data.getFaction().getId());
-        stipendNode.income += stipend*f;
+        stipendNode.income += stipend * f;
 
         if (stipendNode.name == null) {
             stipendNode.name = faction.getDisplayName() + " Commission";
@@ -185,6 +188,7 @@ public class AoTDCommIntelPlugin extends BaseEventIntel implements EconomyTickLi
     public BaseFactionCommisionData getData() {
         return data;
     }
+
     public List<FactionAPI> getHostileFactions() {
         FactionAPI player = Global.getSector().getPlayerFaction();
         List<FactionAPI> hostile = new ArrayList<FactionAPI>();
@@ -195,18 +199,20 @@ public class AoTDCommIntelPlugin extends BaseEventIntel implements EconomyTickLi
         }
         return hostile;
     }
+
     public static Object getAsPureObj() {
         return Global.getSector().getMemoryWithoutUpdate().get(RESEARCH_KEY);
     }
-    public void initializeFully(BaseFactionCommisionData contract,TextPanelAPI text, boolean withIntelNotification,String startingRankId,String firstOfficialRank){
+
+    public void initializeFully(BaseFactionCommisionData contract, TextPanelAPI text, boolean withIntelNotification, String startingRankId, String firstOfficialRank) {
 
 
         this.data = contract;
         this.progress = 10;
-        boolean havePlanets  = !Misc.getPlayerMarkets(false).isEmpty();
-        if (havePlanets&&firstOfficialRank!=null) {
-            setRank(firstOfficialRank);
-            this.progress = data.rankValue.get(firstOfficialRank) + 10;
+        boolean havePlanets = !Misc.getPlayerMarkets(false).isEmpty();
+        if (havePlanets && !data.hasTag(AoTDCommisionTags.DOES_NOT_CARE_ABOUT_PLAYER_COLONIES)) {
+            setRank(data.getAdequateRankForColonies(Misc.getPlayerMarkets(true).size()).id);
+            this.progress = data.rankValue.get(data.getAdequateRankForColonies(Misc.getPlayerMarkets(true).size()).id) + 10;
         } else {
             setRank(startingRankId);
 
@@ -249,21 +255,22 @@ public class AoTDCommIntelPlugin extends BaseEventIntel implements EconomyTickLi
             Color h = Misc.getHighlightColor();
             if (isUpdate && this.getListInfoParam() instanceof BaseEventIntel.EventStageData) {
                 BaseEventIntel.EventStageData esd = (BaseEventIntel.EventStageData) this.getListInfoParam();
-                if(!esd.wasEverReached){
-                    if(!data.hasTag(AoTDCommisionTags.UP_RANK_AUTOMATICALLY)){
-                        info.addPara("You have earned right to become %s",0f,Color.ORANGE,getRankForID(getStageId(esd.id)).name);
+                if (!esd.wasEverReached) {
 
-                    }
-                    else{
-                        info.addPara("You are now %s",0f,Color.ORANGE,getRankForID(getStageId(esd.id)).name);
+                    if (!data.hasTag(AoTDCommisionTags.UP_RANK_AUTOMATICALLY)) {
+                        info.addPara("You have earned right to become %s", 0f, Color.ORANGE, getRankForID(getStageId(esd.id)).name);
+
+                    } else {
+                        info.addPara("You are now %s", 0f, Color.ORANGE, getRankForID(getStageId(esd.id)).name);
                         setRank(getStageId(esd.id));
-
+                        AoTDCommissionUtil.reportPlayerGotNewRank(getCurrentRankData());
                     }
                 }
 
             }
         }
     }
+
     public List<FactionAPI> getRelevantFactions() {
         Set<FactionAPI> factions = new LinkedHashSet<FactionAPI>();
         for (MarketAPI market : Global.getSector().getEconomy().getMarketsCopy()) {
@@ -278,6 +285,7 @@ public class AoTDCommIntelPlugin extends BaseEventIntel implements EconomyTickLi
 
         return new ArrayList<FactionAPI>(factions);
     }
+
     public void makeRepChanges(InteractionDialogAPI dialog) {
         FactionAPI player = Global.getSector().getPlayerFaction();
         for (FactionAPI other : getRelevantFactions()) {
@@ -332,6 +340,7 @@ public class AoTDCommIntelPlugin extends BaseEventIntel implements EconomyTickLi
             undoRepChange(data.faction, dialog);
         }
     }
+
     protected boolean addEventFactorBulletPoints(TooltipMakerAPI info, ListInfoMode mode, boolean isUpdate,
                                                  Color tc, float initPad) {
         if (isUpdate && getListInfoParam() instanceof EventFactor) {
@@ -343,6 +352,7 @@ public class AoTDCommIntelPlugin extends BaseEventIntel implements EconomyTickLi
         }
         return false;
     }
+
     public float getImageSizeForStageDesc(Object stageId) {
         return 48f;
     }
@@ -372,11 +382,10 @@ public class AoTDCommIntelPlugin extends BaseEventIntel implements EconomyTickLi
         if (!forTooltip) {
             info.addPara("Current Rank : %s", initPad, Color.ORANGE, getRankForID((String) stageId).name);
             getRankInfoForTooltip(info, stageId, initPad);
-            if(data.hasTag(AoTDCommisionTags.UP_RANK_AUTOMATICALLY)){
+            if (data.hasTag(AoTDCommisionTags.UP_RANK_AUTOMATICALLY)) {
                 info.addPara("Once you gather enough points for higher rank you automatically attain new rank!", 5f);
 
-            }
-            else{
+            } else {
                 info.addPara("Once you gather enough points for higher rank, you can go to one of Administrators from " + data.getFaction().getDisplayName() + " to ask for promotion", 5f);
 
             }
@@ -396,55 +405,86 @@ public class AoTDCommIntelPlugin extends BaseEventIntel implements EconomyTickLi
         return null;
     }
 
+    public void printSuppliesForTaking(InteractionDialogAPI dialog) {
+        String[] res = new String[2];
+        res[0] = Commodities.SUPPLIES;
+        res[1] = Commodities.FUEL;
+        int[] qty = new int[2];
+        qty[0] = (int) Global.getSector().getPlayerFleet().getCargo().getMaxCapacity();
+        qty[1] = (int) Global.getSector().getPlayerFleet().getCargo().getMaxFuel();
+        dialog.getTextPanel().addPara("Given your current rank which is %s you will be given %s supplies and %s fuel", Color.ORANGE, getCurrentRankData().name, "" + qty[0], "" + qty[1]);
+        dialog.getTextPanel().addPara("You will be able to ask for your supply package after 720 days", Misc.getTooltipTitleAndLightHighlightColor());
+        Misc.showCost(dialog.getTextPanel(), "Supplies available", false, Color.ORANGE, Misc.getGrayColor(), res, qty);
+        dialog.getTextPanel().addPara("You have available %s cargo space for supplies and %s for fuel", Color.ORANGE, "" + QoLMisc.getFreeSpaceAvailable(Global.getSector().getPlayerFleet().getCargo()), "" + Global.getSector().getPlayerFleet().getCargo().getFreeFuelSpace());
+    }
+
+    public boolean doesPlayerMeetCriteriaForCommision() {
+        return data.getFaction().getRelToPlayer().isAtWorst(COMMISSION_REQ);
+    }
+
+    public void deliverCargo(InteractionDialogAPI dialogAPI, CargoAPI deliverCargo) {
+        deliverCargo.addCommodity(Commodities.SUPPLIES, deliverCargo.getMaxCapacity());
+        deliverCargo.addCommodity(Commodities.FUEL, deliverCargo.getMaxFuel());
+        Global.getSector().getPlayerFleet().getMemory().set("$aotd_wait_for_resupply", true, 720);
+        dialogAPI.getTextPanel().addPara("Supply package has been received!", Color.ORANGE);
+    }
+
+    public void printRequirements(InteractionDialogAPI dialog) {
+        CoreReputationPlugin.addRequiredStanding(data.getFaction(), COMMISSION_REQ, null, dialog.getTextPanel(), null, null, 0f, true);
+        CoreReputationPlugin.addCurrentStanding(data.getFaction(), null, dialog.getTextPanel(), null, null, 0f);
+    }
+
     public RankData getCurrentRankData() {
         return getRankForID(getRank());
     }
 
     public void getRankInfoForTooltip(TooltipMakerAPI info, Object stageId, float initPad) {
-        RankData rank = getRankForID(getStageId(stageId));;
+        RankData rank = getRankForID(getStageId(stageId));
+        ;
         info.addPara("Effects:", 3f);
         info.addPara("Salary : %s", initPad, Color.ORANGE, Misc.getDGSCredits(rank.salary));
-        if(rank.hasTag(AoTDRankTags.NONRESTRICTIVE_COLONIZATION)){
-            info.addPara("Receives permit for unrestricted colonization", Misc.getPositiveHighlightColor(), initPad);
-        }
-        else{
-            if(rank.getAmountOfColoniesAbleToColonize()==0){
-                info.addPara("Can't colonize any planets", Misc.getNegativeHighlightColor(), initPad);
-            }
-            else{
-                info.addPara("Receives permit for having %s colonies either owned by you , or being under your direct command", initPad,Misc.getTooltipTitleAndLightHighlightColor(),Color.ORANGE,""+rank.getAmountOfColoniesAbleToColonize() );
+        if (!data.hasTag(AoTDCommisionTags.DOES_NOT_CARE_ABOUT_PLAYER_COLONIES)) {
+            if (rank.hasTag(AoTDRankTags.NONRESTRICTIVE_COLONIZATION)) {
+                info.addPara("Receives permit for unrestricted colonization", Misc.getPositiveHighlightColor(), initPad);
+            } else {
+                if (rank.getAmountOfColoniesAbleToColonize() == 0) {
+                    info.addPara("Can't colonize any planets", Misc.getNegativeHighlightColor(), initPad);
+                } else {
+                    info.addPara("Receives permit for having %s colonies either owned by you , or being under your direct command", initPad, Misc.getTooltipTitleAndLightHighlightColor(), Color.ORANGE, "" + rank.getAmountOfColoniesAbleToColonize());
 
+                }
+            }
+            info.addPara("Note: Colonies will be under supervision of %s, once we leave faction, all colonies will stay with %s", 5f, Color.ORANGE, data.getFaction().getDisplayNameWithArticle(), data.getFaction().getDisplayNameWithArticle());
+        }
+
+
+        if (rank.getTarrifReduciton() > 0) {
+            info.addPara("Reduced tariff for goods by %s", initPad, Misc.getTooltipTitleAndLightHighlightColor(), Color.ORANGE, "" + (int) rank.getTarrifReduciton() + "%");
+        }
+
+        if (rank.hasTag(AoTDRankTags.ACCESS_TO_FACTION_BLUEPRINTS) && Global.getSettings().getModManager().isModEnabled("aotd_vok")) {
+            if (GPManager.isEnabled) {
+                info.addPara("Access to blueprints of weapons, fighters and ships that are under possession of %s", initPad, Misc.getTooltipTitleAndLightHighlightColor(), Color.ORANGE, "" + data.getFaction().getDisplayName());
             }
         }
-        if(rank.getTarrifReduciton()>0){
-            info.addPara("Reduced tariff for goods by %s", initPad,Misc.getTooltipTitleAndLightHighlightColor(),Color.ORANGE,""+(int)rank.getTarrifReduciton()+"%");
+        if (rank.hasTag(AoTDRankTags.FREE_STORAGE)) {
+            info.addPara("Free storage on all planets belonging to %s", initPad, Misc.getTooltipTitleAndLightHighlightColor(), Color.ORANGE, "" + data.getFaction().getDisplayName());
         }
-        if(rank.getTarrifReduciton()>0){
-            info.addPara("Reduced tariff for goods by %s", initPad,Misc.getTooltipTitleAndLightHighlightColor(),Color.ORANGE,""+(int)rank.getTarrifReduciton()+"%");
-        }
-        if(rank.hasTag(AoTDRankTags.ACCESS_TO_FACTION_BLUEPRINTS)&&Global.getSettings().getModManager().isModEnabled("aotd_vok")){
-            if(GPManager.isEnabled){
-                info.addPara("Access to blueprints of weapons, fighters and ships that are under possession of %s", initPad,Misc.getTooltipTitleAndLightHighlightColor(),Color.ORANGE,""+data.getFaction().getDisplayName());
-            }
-        }
-        if(rank.hasTag(AoTDRankTags.FREE_STORAGE)){
-            info.addPara("Free storage on all planets belonging to %s", initPad,Misc.getTooltipTitleAndLightHighlightColor(),Color.ORANGE,""+data.getFaction().getDisplayName());
-        }
-        if(rank.hasTag(AoTDRankTags.HAVE_RESEARCH_PERMIT)&&Global.getSettings().getModManager().isModEnabled("aotd_vok")){
+        if (rank.hasTag(AoTDRankTags.HAVE_RESEARCH_PERMIT) && Global.getSettings().getModManager().isModEnabled("aotd_vok")) {
             info.addPara("Receives permit for establishing independent research operations", Misc.getPositiveHighlightColor(), initPad);
         }
 
-        if(rank.hasTag(AoTDRankTags.CAN_INTIMIDATE_CARGO_PATROL_FLEETS)){
+        if (rank.hasTag(AoTDRankTags.CAN_INTIMIDATE_CARGO_PATROL_FLEETS)) {
             info.addPara("Ability to deny scan of your cargo by patrol fleets of faction", Misc.getPositiveHighlightColor(), initPad);
         }
-        if(rank.hasTag(AoTDRankTags.GETS_COLONY_PROTECTION)){
+        if (rank.hasTag(AoTDRankTags.GETS_COLONY_PROTECTION)) {
             info.addPara(data.getFaction().getDisplayName() + " will protect your colonies from other factions", Misc.getPositiveHighlightColor(), initPad);
         }
-        if(rank.hasTag(AoTDRankTags.COLONY_CONTRACTS)){
+        if (rank.hasTag(AoTDRankTags.COLONY_CONTRACTS)) {
             info.addPara("Ability to sign permanent colony deals with faction (WIP)", Misc.getPositiveHighlightColor(), initPad);
         }
-        if(!rank.isLeavingAnOption()){
-            info.addPara("You are now a permanent member of %s. Any act against %s interest or outright hostile attitude will lead to execution!", initPad,Misc.getTooltipTitleAndLightHighlightColor(),Color.ORANGE,data.getFaction().getDisplayNameWithArticle(),data.getFaction().getDisplayNameWithArticle());
+        if (!rank.isLeavingAnOption()) {
+            info.addPara("You are now a permanent member of %s. Any act against %s interest or outright hostile attitude will lead to execution!", initPad, Misc.getTooltipTitleAndLightHighlightColor(), Color.ORANGE, data.getFaction().getDisplayNameWithArticle(), data.getFaction().getDisplayNameWithArticle());
 
         }
     }
@@ -494,7 +534,7 @@ public class AoTDCommIntelPlugin extends BaseEventIntel implements EconomyTickLi
 
     protected String getStageIconImpl(Object stageId) {
         String stage = (String) stageId;
-            return data.getFaction().getCrest();
+        return data.getFaction().getCrest();
 
         // should not happen - the above cases should handle all possibilities - but just in case
     }
@@ -565,10 +605,30 @@ public class AoTDCommIntelPlugin extends BaseEventIntel implements EconomyTickLi
         }
     }
 
-    public void endCommision(InteractionDialogAPI dialog){
+    boolean commisionValid = true;
+
+    public void endCommision(InteractionDialogAPI dialog) {
+        commisionValid = false;
+        if (!data.hasTag(AoTDCommisionTags.DOES_NOT_CARE_ABOUT_PLAYER_COLONIES)) {
+            for (MarketAPI factionMarket : Misc.getFactionMarkets(data.getFaction())) {
+                if (factionMarket.isPlayerOwned()) {
+                    factionMarket.setPlayerOwned(false);
+                }
+            }
+        } else {
+            for (MarketAPI factionMarket : Misc.getFactionMarkets(data.getFaction())) {
+                if (factionMarket.isPlayerOwned()) {
+                    factionMarket.getPrimaryEntity().setFaction(Global.getSector().getPlayerFaction().getId());
+                    factionMarket.setFactionId(Global.getSector().getPlayerFaction().getId());
+                    factionMarket.setPlayerOwned(false);
+                }
+            }
+
+        }
         undoAllRepChanges(dialog);
         endImmediately();
     }
+
     @Override
     public void endImmediately() {
         for (MarketAPI marketAPI : Global.getSector().getEconomy().getMarketsCopy()) {
@@ -590,15 +650,24 @@ public class AoTDCommIntelPlugin extends BaseEventIntel implements EconomyTickLi
 
     @Override
     protected void advanceImpl(float amount) {
+        if (!commisionValid) return;
         super.advanceImpl(amount);
-        if(data!=null){
-            if(!isDone()){
-                for (MarketAPI marketAPI : Global.getSector().getEconomy().getMarketsCopy()) {
-                    if (marketAPI.getFaction().getId().equals(data.factionID)) {
-                        marketAPI.getTariff().modifyFlat("aotd_commision", -(getCurrentRankData().getTarrifReduciton()/100f), "Commission");
+        if (QoLMisc.isCommissioned()) {
+            if (data != null && data.ranks != null && getCurrentRankData() != null) {
+                if (!isDone()) {
+                    for (MarketAPI marketAPI : Global.getSector().getEconomy().getMarketsCopy()) {
+                        if (marketAPI.getFaction().isPlayerFaction()) {
+                            marketAPI.setFactionId(data.factionID);
+                            marketAPI.setPlayerOwned(true);
+                            marketAPI.getPrimaryEntity().setFaction(data.factionID);
+
+                        }
+                        if (marketAPI.getFaction().getId().equals(data.factionID)) {
+                            marketAPI.getTariff().modifyFlat("aotd_commision", -(getCurrentRankData().getTarrifReduciton() / 100f), "Commission");
+                        }
                     }
+                    makeRepChanges(null);
                 }
-                makeRepChanges(null);
             }
         }
 
@@ -634,23 +703,34 @@ public class AoTDCommIntelPlugin extends BaseEventIntel implements EconomyTickLi
     }
 
     public boolean canColonize() {
-        if(QoLMisc.isInSpaceofCommisionedFaction())return false;
-        return canBuyMarket();
+        return canBuyMarket(getRank());
 
     }
-    public void printWarning(InteractionDialogAPI dialog){
+
+    public void printWarning(InteractionDialogAPI dialog) {
+
         dialog.getTextPanel().addPara("Due to your colonial holdings we are going to propose you one of governor titles, instead of mercenary titles.", Color.ORANGE);
 
-        dialog.getTextPanel().addPara("Once you attain this rank, leaving our faction won't be an option. Should you betray us, we will treat you as threat of high priority.", Color.ORANGE);
+        dialog.getTextPanel().addPara("Not only that, but we require all of your colonies to serve under our banner, we will of course let you keep control over them, but they will belong to " + data.getFaction().getDisplayNameWithArticle(), Color.ORANGE);
     }
-    //Function made to handle buying markets in Nexerelin
-    public boolean canBuyMarket() {
 
-        RankData data = getRankForID(getRank());
-        if(data.hasTag(AoTDRankTags.NONRESTRICTIVE_COLONIZATION))return true;
+    //Function made to handle buying markets in Nexerelin
+    public boolean canBuyMarket(String currentRank) {
+
+        RankData data = getRankForID(currentRank);
+        if (data.hasTag(AoTDRankTags.NONRESTRICTIVE_COLONIZATION)) return true;
         return getAmountOfCurrentColonies() < data.getAmountOfColoniesAbleToColonize();
 
     }
+
+    public boolean hasAttainedThisRankBefore(String rankId) {
+        for (RankData rank : data.ranks) {
+            if (rank.getId().equals(rankId)) return true;
+            if (rank.getId().equals(getCurrentRankData().getId())) break;
+        }
+        return false;
+    }
+
     public boolean canResign() {
         return getCurrentRankData().isLeavingAnOption();
     }

@@ -26,9 +26,10 @@ public class AoTDDealWithNexerlinComm implements EveryFrameScript {
         }
 
         else{
-            Misc.getCommissionIntel().endImmediately();
+
             FactionAPI factionAPI = Misc.getCommissionFaction();
-            if(AoTDCommIntelPlugin.get()==null){
+            Misc.getCommissionIntel().endImmediately();
+            if(AoTDCommIntelPlugin.get()==null&&factionAPI!=null){
                 try {
                     BaseFactionCommisionData data = AoTDCommissionDataManager.getInstance().getCommisionData(factionAPI.getId());
                     if(data==null){

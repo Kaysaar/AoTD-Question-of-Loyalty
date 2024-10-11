@@ -22,6 +22,8 @@ import kaysaar.aotd_question_of_loyalty.data.scripts.commision.AoTDCommissionDat
 import java.util.List;
 import java.util.Map;
 
+import static com.fs.starfarer.api.impl.campaign.intel.AoTDCommIntelPlugin.RESEARCH_KEY;
+
 public class AoTDCommision extends Commission {
     public boolean execute(String ruleId, InteractionDialogAPI dialog, List<Misc.Token> params, Map<String, MemoryAPI> memoryMap) {
 
@@ -226,13 +228,10 @@ public class AoTDCommision extends Commission {
                 new CoreReputationPlugin.RepActionEnvelope(CoreReputationPlugin.RepActions.CUSTOM,
                         impact, null, dialog != null ? dialog.getTextPanel() : null, false, true),
                 faction.getId());
-
-        AoTDCommIntelPlugin.get().unset();
         AoTDCommIntelPlugin.get().endCommision(dialog);
-        for (MarketAPI playerMarket : Misc.getPlayerMarkets(true)) {
-
-        }
+        Global.getSector().getMemoryWithoutUpdate().unset(RESEARCH_KEY);
         Global.getSector().getCharacterData().getMemory().unset(MemFlags.FCM_FACTION);
+
     }
 
     @Override

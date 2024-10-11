@@ -28,6 +28,8 @@ public class AoTDDealWithNexerlinComm implements EveryFrameScript {
         else{
 
             FactionAPI factionAPI = Misc.getCommissionFaction();
+            Global.getSector().removeScript(Misc.getCommissionIntel());
+            Global.getSector().getListenerManager().removeListenerOfClass(Misc.getCommissionIntel().getClass());
             Misc.getCommissionIntel().endImmediately();
             if(AoTDCommIntelPlugin.get()==null&&factionAPI!=null){
                 try {

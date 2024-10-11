@@ -478,9 +478,7 @@ public class AoTDCommIntelPlugin extends BaseEventIntel implements EconomyTickLi
         if (rank.hasTag(AoTDRankTags.CAN_INTIMIDATE_CARGO_PATROL_FLEETS)) {
             info.addPara("Ability to deny scan of your cargo by patrol fleets of faction", Misc.getPositiveHighlightColor(), initPad);
         }
-        if (rank.hasTag(AoTDRankTags.GETS_COLONY_PROTECTION)) {
-            info.addPara(data.getFaction().getDisplayName() + " will protect your colonies from other factions", Misc.getPositiveHighlightColor(), initPad);
-        }
+
         if (rank.hasTag(AoTDRankTags.COLONY_CONTRACTS)) {
             info.addPara("Ability to sign permanent colony deals with faction (WIP)", Misc.getPositiveHighlightColor(), initPad);
         }
@@ -610,6 +608,15 @@ public class AoTDCommIntelPlugin extends BaseEventIntel implements EconomyTickLi
 
     public void endCommision(InteractionDialogAPI dialog) {
         commisionValid = false;
+        for (MarketAPI marketAPI : Global.getSector().getEconomy().getMarketsCopy()) {
+            if (marketAPI.getFaction().getId().equals(data.factionID)) {
+                marketAPI.getTariff().unmodifyFlat("aotd_commision");
+            }
+        }
+        AoTDFreeStorageComm.runCleanUpScript(data.getFaction());
+        Global.getSector().getListenerManager().removeListener(this);
+        Global.getSector().removeScript(this);
+
         if (!data.hasTag(AoTDCommisionTags.DOES_NOT_CARE_ABOUT_PLAYER_COLONIES)) {
             for (MarketAPI factionMarket : Misc.getFactionMarkets(data.getFaction())) {
                 if (factionMarket.isPlayerOwned()) {
@@ -626,20 +633,28 @@ public class AoTDCommIntelPlugin extends BaseEventIntel implements EconomyTickLi
             }
 
         }
+        MonthlyReport report = SharedData.getData().getCurrentReport();
+
+        MonthlyReport.FDNode fleetNode = report.getNode(MonthlyReport.FLEET);
+        fleetNode.name = "Fleet";
+        fleetNode.custom = MonthlyReport.FLEET;
+        fleetNode.tooltipCreator = report.getMonthlyReportTooltip();
+        final FactionAPI faction = data.getFaction();
+        float stipend = getCurrentRankData().salary;
+        MonthlyReport.FDNode stipendNode = report.getNode(fleetNode, "node_id_stipend_" + data.getFaction().getId());
+        stipendNode.income=0f;
+        fleetNode.getChildren().remove(stipendNode);
         undoAllRepChanges(dialog);
         endImmediately();
+
     }
 
     @Override
     public void endImmediately() {
-        for (MarketAPI marketAPI : Global.getSector().getEconomy().getMarketsCopy()) {
-            if (marketAPI.getFaction().getId().equals(data.factionID)) {
-                marketAPI.getTariff().unmodifyFlat("aotd_commision");
-            }
-        }
-        AoTDFreeStorageComm.runCleanUpScript(data.getFaction());
         //endAfterDelay();
+
         super.endImmediately();
+
 
 
     }

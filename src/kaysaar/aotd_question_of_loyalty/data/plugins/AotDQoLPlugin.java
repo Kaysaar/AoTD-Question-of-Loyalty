@@ -17,10 +17,7 @@ import kaysaar.aotd_question_of_loyalty.data.scripts.commision.AoTDCommissionDat
 import kaysaar.aotd_question_of_loyalty.data.scripts.effectapplier.AoTDIgnoreTurningOffTransponder;
 import kaysaar.aotd_question_of_loyalty.data.scripts.effectapplier.AoTDSharedSensorLink;
 import kaysaar.aotd_question_of_loyalty.data.scripts.rulesInterceptor.*;
-import kaysaar.aotd_question_of_loyalty.data.scripts.trackers.BountyTracker;
-import kaysaar.aotd_question_of_loyalty.data.scripts.trackers.DeliveryTracker;
-import kaysaar.aotd_question_of_loyalty.data.scripts.trackers.ExplorationTracker;
-import kaysaar.aotd_question_of_loyalty.data.scripts.trackers.MagicLibBountyTracker;
+import kaysaar.aotd_question_of_loyalty.data.scripts.trackers.*;
 
 import java.util.Iterator;
 
@@ -67,6 +64,7 @@ public class AotDQoLPlugin extends BaseModPlugin {
         if (Global.getSettings().getModManager().isModEnabled("MagicLib")) {
             Global.getSector().addTransientScript(new MagicLibBountyTracker());
         }
+        Global.getSector().addTransientScript(new AoTDIncomeFixerTracker());
         if (AoTDCommIntelPlugin.get() != null) {
             AoTDCommIntelPlugin.get().updateData();
         }

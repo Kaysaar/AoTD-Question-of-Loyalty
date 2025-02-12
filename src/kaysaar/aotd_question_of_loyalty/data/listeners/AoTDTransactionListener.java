@@ -4,8 +4,9 @@ import com.fs.starfarer.api.campaign.PlayerMarketTransaction;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.listeners.ColonyInteractionListener;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
-import com.fs.starfarer.api.impl.campaign.intel.AoTDCommIntelPlugin;
-import com.fs.starfarer.api.impl.campaign.intel.eventfactors.onetime.GoodTradeFactor;
+
+import kaysaar.aotd_question_of_loyalty.data.intel.AoTDCommIntelPlugin;
+import kaysaar.aotd_question_of_loyalty.data.intel.eventfactors.onetime.GoodTradeFactor;
 import kaysaar.aotd_question_of_loyalty.data.misc.QoLMisc;
 
 public class AoTDTransactionListener implements ColonyInteractionListener {

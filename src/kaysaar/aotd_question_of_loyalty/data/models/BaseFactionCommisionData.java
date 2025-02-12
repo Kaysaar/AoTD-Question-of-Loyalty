@@ -2,8 +2,7 @@ package kaysaar.aotd_question_of_loyalty.data.models;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.FactionAPI;
-import com.fs.starfarer.api.impl.campaign.intel.AoTDCommIntelPlugin;
-import kaysaar.aotd_question_of_loyalty.data.misc.QoLMisc;
+import kaysaar.aotd_question_of_loyalty.data.intel.AoTDCommIntelPlugin;
 import kaysaar.aotd_question_of_loyalty.data.scripts.commision.AoTDCommissionDataManager;
 import kaysaar.aotd_question_of_loyalty.data.tags.AoTDRankTags;
 
@@ -74,7 +73,7 @@ public class BaseFactionCommisionData {
         iconMap.put("auxiliary","hyperspace_topography");
         iconMap.put("mercenary","hyperspace_topography");
 
-        return new BaseFactionCommisionData(factionID,iconMap,2500,data,"com.fs.starfarer.api.impl.campaign.intel.AoTDCommIntelPlugin",rankValue,tags);
+        return new BaseFactionCommisionData(factionID,iconMap,2500,data,AoTDCommIntelPlugin.class.getName(),rankValue,tags);
     }
     public String getFirstDefRank(){
         for (RankData rank : ranks) {

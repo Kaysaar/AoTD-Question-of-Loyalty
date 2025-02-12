@@ -9,9 +9,10 @@ import com.fs.starfarer.api.impl.campaign.fleets.EconomyFleetAssignmentAI;
 import com.fs.starfarer.api.impl.campaign.fleets.EconomyFleetRouteManager;
 import com.fs.starfarer.api.impl.campaign.fleets.RouteManager;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
-import com.fs.starfarer.api.impl.campaign.intel.AoTDCommIntelPlugin;
-import com.fs.starfarer.api.impl.campaign.intel.eventfactors.onetime.StoppingSmuggler;
+
 import com.fs.starfarer.api.util.Misc;
+import kaysaar.aotd_question_of_loyalty.data.intel.AoTDCommIntelPlugin;
+import kaysaar.aotd_question_of_loyalty.data.intel.eventfactors.onetime.StoppingSmuggler;
 import kaysaar.aotd_question_of_loyalty.data.misc.QoLMisc;
 import kaysaar.aotd_question_of_loyalty.data.tags.AoTDRankTags;
 

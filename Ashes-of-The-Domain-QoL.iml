@@ -14,5 +14,7 @@
     <orderEntry type="library" name="LazyLib" level="project" />
     <orderEntry type="library" name="Vok" level="project" />
     <orderEntry type="library" name="LunaLib" level="project" />
+    <orderEntry type="library" name="ashlib" level="project" />
+    <orderEntry type="library" name="ExerelinCore" level="project" />
   </component>
 </module>

@@ -3,7 +3,7 @@ package kaysaar.aotd_question_of_loyalty.data.scripts.rulesInterceptor;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 
-import com.fs.starfarer.api.impl.campaign.intel.AoTDCommIntelPlugin;
+import kaysaar.aotd_question_of_loyalty.data.intel.AoTDCommIntelPlugin;
 import kaysaar.aotd_question_of_loyalty.data.misc.QoLMisc;
 import kaysaar.aotd_question_of_loyalty.data.tags.AoTDRankTags;
 
@@ -13,7 +13,7 @@ public class TalkWayFromScanScript extends BaseReplaceScript{
     public boolean shouldInsert(InteractionDialogAPI dialogAPI){
         boolean goodOpton = dialogAPI.getOptionPanel().hasOption("tOff_comply2")||dialogAPI.getOptionPanel().hasOption("tOff_comply")||dialogAPI.getOptionPanel().hasOption("cargoScan_comply");
 //       return d
-         return goodOpton&& QoLMisc.isCommissionedBy(dialogAPI.getInteractionTarget().getFaction().getId())&&AoTDCommIntelPlugin.get().getCurrentRankData().hasTag(AoTDRankTags.CAN_INTIMIDATE_CARGO_PATROL_FLEETS);
+         return goodOpton&& QoLMisc.isCommissionedBy(dialogAPI.getInteractionTarget().getFaction().getId())&& AoTDCommIntelPlugin.get().getCurrentRankData().hasTag(AoTDRankTags.CAN_INTIMIDATE_CARGO_PATROL_FLEETS);
 
     }
     @Override

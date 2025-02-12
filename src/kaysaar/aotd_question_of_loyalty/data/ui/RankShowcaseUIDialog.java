@@ -6,10 +6,10 @@ import com.fs.starfarer.api.campaign.CustomDialogDelegate;
 import com.fs.starfarer.api.campaign.CustomUIPanelPlugin;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
-import com.fs.starfarer.api.impl.campaign.intel.AoTDCommIntelPlugin;
 import com.fs.starfarer.api.impl.campaign.rulecmd.FireBest;
 import com.fs.starfarer.api.ui.*;
 import com.fs.starfarer.api.util.Misc;
+import kaysaar.aotd_question_of_loyalty.data.intel.AoTDCommIntelPlugin;
 import kaysaar.aotd_question_of_loyalty.data.scripts.commision.AoTDCommissionUtil;
 import org.jetbrains.annotations.NotNull;
 

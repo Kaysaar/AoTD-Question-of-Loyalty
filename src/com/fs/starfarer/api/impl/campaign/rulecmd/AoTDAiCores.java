@@ -8,11 +8,11 @@ import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.impl.campaign.CoreReputationPlugin;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.impl.campaign.ids.Strings;
-import com.fs.starfarer.api.impl.campaign.intel.AoTDCommIntelPlugin;
-import com.fs.starfarer.api.impl.campaign.intel.eventfactors.onetime.AiCoreSellFactor;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.AICores;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import kaysaar.aotd_question_of_loyalty.data.intel.AoTDCommIntelPlugin;
+import kaysaar.aotd_question_of_loyalty.data.intel.eventfactors.onetime.AiCoreSellFactor;
 import kaysaar.aotd_question_of_loyalty.data.misc.QoLMisc;
 
 import java.awt.*;
@@ -153,17 +153,17 @@ public class AoTDAiCores extends AICores {
 
     public int getValueOfCore(String id) {
         if (id.equals(Commodities.GAMMA_CORE)) {
-            return 4;
+            return 9;
         }
         if (id.equals(Commodities.BETA_CORE)) {
-            return 8;
+            return 18;
         }
         if (id.equals(Commodities.ALPHA_CORE)) {
-            return 12;
+            return 36;
         }
         if (id.equals(Commodities.OMEGA_CORE)) {
-            return 16;
+            return 42;
         }
-        return 2;
+        return 40;
     }
 }

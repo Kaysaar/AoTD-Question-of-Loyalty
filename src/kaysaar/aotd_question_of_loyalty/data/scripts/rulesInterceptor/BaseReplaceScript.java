@@ -1,7 +1,7 @@
 package kaysaar.aotd_question_of_loyalty.data.scripts.rulesInterceptor;
 
 import com.fs.starfarer.api.EveryFrameScript;
-import com.fs.starfarer.api.impl.campaign.intel.AoTDCommIntelPlugin;
+import kaysaar.aotd_question_of_loyalty.data.intel.AoTDCommIntelPlugin;
 
 public class BaseReplaceScript implements EveryFrameScript {
     public boolean isInInteraction = false;

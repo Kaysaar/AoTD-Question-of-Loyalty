@@ -4,10 +4,10 @@ import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin;
 import com.fs.starfarer.api.impl.campaign.intel.AnalyzeEntityMissionIntel;
-import com.fs.starfarer.api.impl.campaign.intel.AoTDCommIntelPlugin;
 import com.fs.starfarer.api.impl.campaign.intel.BaseMissionIntel;
 import com.fs.starfarer.api.impl.campaign.intel.SurveyPlanetMissionIntel;
-import com.fs.starfarer.api.impl.campaign.intel.eventfactors.onetime.ExplorationCompletionFactor;
+import kaysaar.aotd_question_of_loyalty.data.intel.AoTDCommIntelPlugin;
+import kaysaar.aotd_question_of_loyalty.data.intel.eventfactors.onetime.ExplorationCompletionFactor;
 import kaysaar.aotd_question_of_loyalty.data.misc.QoLMisc;
 import kaysaar.aotd_question_of_loyalty.data.plugins.ReflectionUtilis;
 

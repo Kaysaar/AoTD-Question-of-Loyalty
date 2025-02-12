@@ -8,10 +8,10 @@ import com.fs.starfarer.api.characters.AbilityPlugin;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.impl.campaign.intel.AoTDCommIntelPlugin;
 import com.fs.starfarer.api.impl.campaign.intel.FactionCommissionIntel;
-import com.fs.starfarer.api.impl.campaign.intel.eventfactors.onetime.DestroyingEnemyFactor;
 import com.fs.starfarer.api.util.Misc;
+import kaysaar.aotd_question_of_loyalty.data.intel.AoTDCommIntelPlugin;
+import kaysaar.aotd_question_of_loyalty.data.intel.eventfactors.onetime.DestroyingEnemyFactor;
 import kaysaar.aotd_question_of_loyalty.data.misc.QoLMisc;
 
 public class AoTDDestructionOfEnemiesTracker implements CampaignEventListener {
@@ -57,7 +57,7 @@ public class AoTDDestructionOfEnemiesTracker implements CampaignEventListener {
             CampaignFleetAPI fleet = QoLMisc.getNonPlayerFleet(result).getFleet();
             for (FactionAPI hostileFaction : AoTDCommIntelPlugin.get().getHostileFactions()) {
                 if (fleet.getFaction().getId().equals(hostileFaction.getId())) {
-                    float factor = 2;
+                    float factor = 0.5F ;
                     float score = 0;
                     for (FleetMemberAPI o : QoLMisc.getNonPlayerFleet(result).getDestroyed()) {
                         score += o.getVariant().getHullSize().ordinal() * factor;

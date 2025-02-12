@@ -8,23 +8,27 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.CoreReputationPlugin;
 import com.fs.starfarer.api.impl.campaign.ids.Entities;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
-import com.fs.starfarer.api.impl.campaign.intel.AoTDCommIntelPlugin;
 
 import com.fs.starfarer.api.impl.campaign.intel.FactionCommissionIntel;
 import com.fs.starfarer.api.impl.campaign.rulecmd.missions.Commission;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import kaysaar.aotd_question_of_loyalty.data.intel.AoTDCommIntelPlugin;
 import kaysaar.aotd_question_of_loyalty.data.misc.QoLMisc;
 import kaysaar.aotd_question_of_loyalty.data.models.BaseFactionCommisionData;
+import kaysaar.aotd_question_of_loyalty.data.scripts.AoTDPensionFund;
 import kaysaar.aotd_question_of_loyalty.data.scripts.commision.AoTDCommissionUtil;
 import kaysaar.aotd_question_of_loyalty.data.scripts.commision.AoTDCommissionDataManager;
+import kaysaar.aotd_question_of_loyalty.data.scripts.commision.FactionHatredManager;
+import kaysaar.aotd_question_of_loyalty.data.scripts.fleets.TraitorBountyFleetApplier;
 
 import java.util.List;
 import java.util.Map;
 
-import static com.fs.starfarer.api.impl.campaign.intel.AoTDCommIntelPlugin.RESEARCH_KEY;
+import static kaysaar.aotd_question_of_loyalty.data.intel.AoTDCommIntelPlugin.RESEARCH_KEY;
 
 public class AoTDCommision extends Commission {
+    public static String isHatedByFactionMemKey =  "$aotd_treason";
     public boolean execute(String ruleId, InteractionDialogAPI dialog, List<Misc.Token> params, Map<String, MemoryAPI> memoryMap) {
 
         this.dialog = dialog;
@@ -60,7 +64,11 @@ public class AoTDCommision extends Commission {
         //printInfo
         //accept
 
-        if (command.equals("printRequirements")) {
+        if (command.equals("retiredFromThatFaction")) {
+           return Global.getSector().getMemory().getString(AoTDRetirementOption.memKey).equals(faction.getId());
+        }
+
+        else if (command.equals("printRequirements")) {
             printRequirements();
         } else if (command.equals("playerMeetsCriteria")) {
             return playerMeetsCriteria();
@@ -203,8 +211,21 @@ public class AoTDCommision extends Commission {
             intel.initializeFully(data, text, false, data.getFirstDefRank(), data.getFirstOfficialRank());
             intel.sendUpdate(FactionCommissionIntel.UPDATE_PARAM_ACCEPTED, dialog.getTextPanel());
             Global.getSector().getCharacterData().getMemoryWithoutUpdate().set(MemFlags.FCM_FACTION, faction.getId());
+            if(intel.hasRetiredFromAnyFaction()&&!intel.hasRetiredFromFaction()){
+                FactionAPI factionAPI = Global.getSector().getFaction(Global.getSector().getMemory().getString(AoTDRetirementOption.memKey));
+                intel.makeVengeful(factionAPI,dialog);
+                FactionHatredManager.get().addFactionThatHatePlayer(factionAPI.getId());
+                TraitorBountyFleetApplier.triggerTreasonFleets(factionAPI.getId());
+                Global.getSector().getListenerManager().removeListenerOfClass(AoTDPensionFund.class);
+                Global.getSector().getMemory().unset(AoTDRetirementOption.memKey);
+
+            }
             intel.makeRepChanges(dialog);
+            for (MarketAPI playerMarket : Misc.getPlayerMarkets(false)) {
+                AoTDCommIntelPlugin.setMarketFaction(playerMarket,faction.getId(),true);
+            }
             AoTDCommissionUtil.reportPlayerGotNewRank(intel.getCurrentRankData());
+
 
         }
     }
@@ -228,7 +249,7 @@ public class AoTDCommision extends Commission {
                 new CoreReputationPlugin.RepActionEnvelope(CoreReputationPlugin.RepActions.CUSTOM,
                         impact, null, dialog != null ? dialog.getTextPanel() : null, false, true),
                 faction.getId());
-        AoTDCommIntelPlugin.get().endCommision(dialog);
+        AoTDCommIntelPlugin.get().endCommision(dialog,false);
         Global.getSector().getMemoryWithoutUpdate().unset(RESEARCH_KEY);
         Global.getSector().getCharacterData().getMemory().unset(MemFlags.FCM_FACTION);
 
@@ -238,8 +259,8 @@ public class AoTDCommision extends Commission {
     protected void printInfo() {
 
         TooltipMakerAPI info = dialog.getTextPanel().beginTooltip();
-        getPluginForFaction().printInfo(info);
-        dialog.getTextPanel().addTooltip();
+        getPluginForFaction().printInfo(dialog,info);
+
     }
 
     public boolean canResign() {

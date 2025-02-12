@@ -2,10 +2,13 @@ package kaysaar.aotd_question_of_loyalty.data.scripts.rulesInterceptor;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
-import com.fs.starfarer.api.impl.campaign.intel.AoTDCommIntelPlugin;
+
+import kaysaar.aotd_question_of_loyalty.data.intel.AoTDCommIntelPlugin;
 import kaysaar.aotd_question_of_loyalty.data.tags.AoTDCommisionTags;
+import kaysaar.aotd_question_of_loyalty.data.tags.AoTDRankTags;
 import org.lwjgl.input.Keyboard;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ResignCommsionReplaceScript extends BaseReplaceScript {
@@ -15,7 +18,7 @@ public class ResignCommsionReplaceScript extends BaseReplaceScript {
      ;
         if (Global.getSector().getCampaignUI().isShowingDialog()) {
             InteractionDialogAPI dialog = Global.getSector().getCampaignUI().getCurrentInteractionDialog();
-            if (dialog != null&&AoTDCommIntelPlugin.get()!=null) {
+            if (dialog != null&& AoTDCommIntelPlugin.get()!=null) {
                 if (dialog.getOptionPanel().hasOption("cmsn_resignCommission") && !isInInteraction) {
                     isInInteraction = true;
                     dialog.getOptionPanel().removeOption("cmsn_resignCommission");
@@ -25,15 +28,20 @@ public class ResignCommsionReplaceScript extends BaseReplaceScript {
                     if(!AoTDCommIntelPlugin.get().canResign()){
                         tooltip = "We can't resign our commission, due to our high ranking position.";
                     }
-                    dialog.getOptionPanel().addOption("I would like to resign my commission", "aotd_cmsn_resignCommission", AoTDCommIntelPlugin.optionColor,tooltip);
-                    if(!AoTDCommIntelPlugin.get().getData().hasTag(AoTDCommisionTags.UP_RANK_AUTOMATICALLY)){
+                    if(!AoTDCommIntelPlugin.get().getCurrentRankData().hasTag(AoTDRankTags.CAN_RETIRE)){
+                        dialog.getOptionPanel().addOption("I would like to resign my commission", "aotd_cmsn_resignCommission", AoTDCommIntelPlugin.optionColor,tooltip);
 
                     }
-                    dialog.getOptionPanel().addOption("I would want to ask for promotion", "aotd_ask_promotion", AoTDCommIntelPlugin.optionColor,null);
+                    else{
+                        dialog.getOptionPanel().addOption("I would like to retire from commission", "aotd_cmsn_retire", AoTDCommIntelPlugin.optionColor,tooltip);
 
+                    }
+                    if(!AoTDCommIntelPlugin.get().getData().hasTag(AoTDCommisionTags.UP_RANK_AUTOMATICALLY)){
+                        dialog.getOptionPanel().addOption("I would want to ask for promotion", "aotd_ask_promotion", AoTDCommIntelPlugin.optionColor,null);
+
+                    }
                     List list2 = dialog.getOptionPanel().getSavedOptionList();
-                    Object obj = list2.get(0);
-                    Object obj2 = list2.get(1);
+                    ArrayList<Object> objects = new ArrayList<>(list2);
                     List list3 = dialog.getOptionPanel().getSavedOptionList();
                     list3.clear();
 
@@ -41,8 +49,7 @@ public class ResignCommsionReplaceScript extends BaseReplaceScript {
                     int i = 0;
                     for (Object o : list) {
                         if (i == 1) {
-                            list3.add(obj);
-                            list3.add(obj2);
+                           list3.addAll(objects);
                         }
                         list3.add(o);
                         i++;

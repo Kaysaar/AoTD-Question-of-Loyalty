@@ -15,5 +15,5 @@ public class AoTDRankTags {
     public static String ACCESS_TO_FACTION_RESOURCES = "faction_resources_access";
     public static String ACCESS_TO_FACTION_BLUEPRINTS = "faction_blueprint_access";
 
-
+    public static String CAN_RETIRE = "can_retire";
 }

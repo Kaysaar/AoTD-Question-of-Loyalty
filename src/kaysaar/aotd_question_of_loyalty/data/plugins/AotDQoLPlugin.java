@@ -5,6 +5,7 @@ import com.fs.starfarer.api.BaseModPlugin;
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
+import com.fs.starfarer.api.impl.campaign.econ.LuddicMajority;
 import com.fs.starfarer.api.impl.campaign.intel.events.HostileActivityEventIntel;
 import com.fs.starfarer.api.impl.campaign.intel.events.HostileActivityManager;
 import exerelin.utilities.NexUtilsMarket;

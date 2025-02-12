@@ -5,7 +5,9 @@ import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.util.Misc;
 import kaysaar.aotd_question_of_loyalty.data.intel.AoTDCommIntelPlugin;
+import kaysaar.aotd_question_of_loyalty.data.models.AoTDHandleBonusesFromBeingRetired;
 import kaysaar.aotd_question_of_loyalty.data.scripts.AoTDPensionFund;
+import kaysaar.aotd_question_of_loyalty.data.scripts.crisisalt.ActivityCrisisRemover;
 
 import java.awt.*;
 import java.util.List;
@@ -36,6 +38,8 @@ public class AoTDRetirementOption extends BaseCommandPlugin{
         if(command.equals("proceed")){
 
             new AoTDPensionFund(AoTDCommIntelPlugin.get().getCurrentlyCommisonedFaction().getId(),AoTDCommIntelPlugin.get().getCreditsForRetirement(),AoTDCommIntelPlugin.get().getCurrentRankData().getId());
+            Global.getSector().addScript(new ActivityCrisisRemover());
+            AoTDHandleBonusesFromBeingRetired.applyTTDeal(dialog);
             AoTDCommIntelPlugin.get().endCommision(dialog,false);
         }
         return true;

@@ -14,8 +14,11 @@ import com.fs.starfarer.api.impl.campaign.rulecmd.missions.Commission;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import kaysaar.aotd_question_of_loyalty.data.intel.AoTDCommIntelPlugin;
+import kaysaar.aotd_question_of_loyalty.data.listeners.AoTDColonyCrisisInserter;
 import kaysaar.aotd_question_of_loyalty.data.misc.QoLMisc;
+import kaysaar.aotd_question_of_loyalty.data.models.AoTDHandleBonusesFromBeingRetired;
 import kaysaar.aotd_question_of_loyalty.data.models.BaseFactionCommisionData;
+import kaysaar.aotd_question_of_loyalty.data.models.RetirementInfo;
 import kaysaar.aotd_question_of_loyalty.data.scripts.AoTDPensionFund;
 import kaysaar.aotd_question_of_loyalty.data.scripts.commision.AoTDCommissionUtil;
 import kaysaar.aotd_question_of_loyalty.data.scripts.commision.AoTDCommissionDataManager;
@@ -212,14 +215,18 @@ public class AoTDCommision extends Commission {
             intel.sendUpdate(FactionCommissionIntel.UPDATE_PARAM_ACCEPTED, dialog.getTextPanel());
             Global.getSector().getCharacterData().getMemoryWithoutUpdate().set(MemFlags.FCM_FACTION, faction.getId());
             if(intel.hasRetiredFromAnyFaction()&&!intel.hasRetiredFromFaction()){
-                FactionAPI factionAPI = Global.getSector().getFaction(Global.getSector().getMemory().getString(AoTDRetirementOption.memKey));
+                FactionAPI factionAPI = Global.getSector().getFaction(RetirementInfo.getInstance().getPrevFaction());
                 intel.makeVengeful(factionAPI,dialog);
                 FactionHatredManager.get().addFactionThatHatePlayer(factionAPI.getId());
+                AoTDHandleBonusesFromBeingRetired.unapplyBonusesFromRetirement(dialog);
                 TraitorBountyFleetApplier.triggerTreasonFleets(factionAPI.getId());
                 Global.getSector().getListenerManager().removeListenerOfClass(AoTDPensionFund.class);
-                Global.getSector().getMemory().unset(AoTDRetirementOption.memKey);
+
 
             }
+
+            AoTDHandleBonusesFromBeingRetired.unapplyBonusesFromRetirement(dialog);
+            AoTDHandleBonusesFromBeingRetired.unapplyTTDeal(dialog,faction);
             intel.makeRepChanges(dialog);
             for (MarketAPI playerMarket : Misc.getPlayerMarkets(false)) {
                 AoTDCommIntelPlugin.setMarketFaction(playerMarket,faction.getId(),true);

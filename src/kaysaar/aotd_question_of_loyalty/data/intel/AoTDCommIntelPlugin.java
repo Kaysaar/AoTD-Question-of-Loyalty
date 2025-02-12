@@ -958,6 +958,7 @@ public class AoTDCommIntelPlugin extends BaseEventIntel implements EconomyTickLi
     }
 
     public static void setMarketFaction(MarketAPI marketAPI,String factionID,boolean joiningComm) {
+        if(marketAPI.hasTag("nex_playerOutpost"))return;
         if(marketAPI.getCommDirectory().getEntriesCopy().isEmpty()){
             AoTDNexMarketUtil.addOrUpdateOfficials(marketAPI);
         }

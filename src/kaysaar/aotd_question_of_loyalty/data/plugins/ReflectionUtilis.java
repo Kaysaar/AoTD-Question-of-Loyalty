@@ -41,7 +41,6 @@ public class ReflectionUtilis {
             setMethodAccessable = lookup.findVirtual(methodClass, "setAccessible", MethodType.methodType(Void.TYPE, boolean.class));
             getModifiersHandle = lookup.findVirtual(methodClass, "getModifiers", MethodType.methodType(int.class));
             getParameterTypesHandle = lookup.findVirtual(methodClass, "getParameterTypes", MethodType.methodType(Class[].class));
-            CampaignEngine.getInstance().getCampaignUI().getCore();
 
         } catch (Exception e) {
             throw new RuntimeException(e);

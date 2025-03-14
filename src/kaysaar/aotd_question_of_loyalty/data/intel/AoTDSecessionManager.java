@@ -299,9 +299,11 @@ public class AoTDSecessionManager extends BaseEventIntel implements FleetEventLi
         rebellingAgainst.getRelToPlayer().setLevel(RepLevel.VENGEFUL);
         if (Misc.getFactionMarkets(rebellingAgainst).isEmpty()) {
             endRebellion(true);
+            return;
         }
        if(Misc.getPlayerMarkets(false).isEmpty()){
            endRebellion(false);
+           return;
        }
        if(getLastActiveStage(true).id == Stage.THRESHOLD_3){
            boolean defeatedAll = true;

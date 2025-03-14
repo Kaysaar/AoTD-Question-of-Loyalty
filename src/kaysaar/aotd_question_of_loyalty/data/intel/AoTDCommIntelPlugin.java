@@ -981,7 +981,7 @@ public class AoTDCommIntelPlugin extends BaseEventIntel implements EconomyTickLi
         }
         if(joiningComm){
             for (CampaignFleetAPI fleet : marketAPI.getStarSystem().getFleets()) {
-                if(fleet.getFaction().isPlayerFaction()){
+                if(fleet.getFaction().isPlayerFaction()&&!fleet.isPlayerFleet()){
                     fleet.setFaction(factionID,true);
                 }
             }
@@ -1056,7 +1056,13 @@ public class AoTDCommIntelPlugin extends BaseEventIntel implements EconomyTickLi
     }
 
     public int getAmountOfCurrentColonies() {
-        return Misc.getPlayerMarkets(true).size();
+        int amount = 0;
+        for (MarketAPI playerMarket : Misc.getPlayerMarkets(true)) {
+            if(playerMarket.hasTag("nex_playerOutpost"))continue;
+            amount++;
+        }
+        return amount;
+
     }
 
     @Override

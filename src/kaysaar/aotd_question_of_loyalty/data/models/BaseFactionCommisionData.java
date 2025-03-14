@@ -102,6 +102,23 @@ public class BaseFactionCommisionData {
                 return rank;
             }
         }
+        if(firstNonRestrictiveRank==null){
+            firstNonRestrictiveRank = getRankWithMaxColonies();
+        }
+        return firstNonRestrictiveRank;
+
+    }
+    public RankData getRankWithMaxColonies(){
+        RankData firstNonRestrictiveRank = ranks.get(0);
+        for (RankData rank : ranks) {
+            if(rank.getAmountOfColoniesAbleToColonize()!=0&&firstNonRestrictiveRank==null){
+                firstNonRestrictiveRank = rank;
+                continue;
+            }
+            if(rank.getAmountOfColoniesAbleToColonize()>firstNonRestrictiveRank.getAmountOfColoniesAbleToColonize()){
+                firstNonRestrictiveRank = rank;
+            }
+        }
 
         return firstNonRestrictiveRank;
 

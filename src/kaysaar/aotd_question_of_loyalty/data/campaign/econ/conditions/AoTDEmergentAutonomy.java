@@ -10,7 +10,7 @@ public class AoTDEmergentAutonomy extends BaseMarketConditionPlugin {
     @Override
     public void apply(String id) {
         super.apply(id);
-        if(market.getFaction().isPlayerFaction()){
+        if(market.getFaction()!=null&&market.getFaction().isPlayerFaction()){
             market.getStability().modifyFlat("aotd_emergent",2,"Emergent Autonomy");
             market.getStats().getDynamic().getMod(Stats.GROUND_DEFENSES_MOD).modifyMult("aotd_emergent",2f,"Emergent Autonomy");
         }

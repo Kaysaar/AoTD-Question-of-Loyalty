@@ -10,6 +10,7 @@ import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Industries;
 import com.fs.starfarer.api.impl.campaign.ids.Ranks;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator;
+import com.fs.starfarer.api.util.Misc;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,6 +22,9 @@ public class AoTDNexMarketUtil {
     public static boolean hasPerson(MarketAPI market, String postId)
     {
         return getPerson(market, postId) != null;
+    }
+    public static boolean doesPlayerHaveMarkets(boolean includeNonPlayerFactionMarkets){
+        return Misc.getPlayerMarkets(includeNonPlayerFactionMarkets).stream().anyMatch(x -> !x.hasTag("nex_playerOutpost"));
     }
     public static PersonAPI getPerson(MarketAPI market, String postId)
     {

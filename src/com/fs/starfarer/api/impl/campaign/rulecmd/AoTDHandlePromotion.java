@@ -44,7 +44,10 @@ public class AoTDHandlePromotion extends BaseCommandPlugin {
 
         playerFleet = Global.getSector().getPlayerFleet();
         playerCargo = playerFleet.getCargo();
-        String id = Global.getSector().getMemory().getString("$aotd_rank_temp");
+        String id =null;
+        if(Global.getSector().getMemory().contains("$aotd_rank_temp")){
+            id = Global.getSector().getMemory().getString("$aotd_rank_temp");
+        }
         String currid = AoTDCommIntelPlugin.get().getRank();
         daten = AoTDCommIntelPlugin.get().getRankForID(id);
         currDaten = AoTDCommIntelPlugin.get().getRankForID(currid);
@@ -55,11 +58,11 @@ public class AoTDHandlePromotion extends BaseCommandPlugin {
         faction = person.getFaction();
         if (command.equals("initConversation")) {
             dialog.getOptionPanel().clearOptions();
-            if (!daten.isLeavingAnOption() && currDaten.isLeavingAnOption()) {
+            if ( currDaten.isLeavingAnOption()) {
                 dialog.getTextPanel().addPara("Once you attain this rank, leaving our faction won't be an option. Should you betray us, we will treat you as threat of high priority.",Color.ORANGE);
                 dialog.getOptionPanel().addOption("Yes, I am aware of this", "aotd_confirm_no_going_back");
                 dialog.getOptionPanel().addOption("On second thought, I think i am not ready for this", "aotd_return_no_rank");
-            } else {
+            } else if (daten!=null) {
                 dialog.getTextPanel().addPara("You have proven yourself useful, and your efforts have greatly helped our faction");
                 dialog.getTextPanel().addPara("Given your request and power bestowed by our leaders");
                 dialog.getTextPanel().addPara("From now on your rank shall be %s", Color.ORANGE, daten.name);

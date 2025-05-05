@@ -41,6 +41,9 @@ public class HoldoutEventFactor extends BaseEventFactor {
 
     @Override
     public int getProgress(BaseEventIntel intel) {
+        if(AoTDSecessionManager.get().getOriginalMarkets().isEmpty()){
+            return 0;
+        }
         return BASE_POINTS/(int)((float)AoTDSecessionManager.get().getMarketsStillOwned()/(float)AoTDSecessionManager.get().getOriginalMarkets().size());
     }
 }

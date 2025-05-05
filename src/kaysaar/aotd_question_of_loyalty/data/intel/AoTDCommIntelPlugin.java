@@ -2,7 +2,6 @@ package kaysaar.aotd_question_of_loyalty.data.intel;
 
 import ashlib.data.plugins.misc.AshMisc;
 import ashlib.data.plugins.ui.models.BasePopUpDialog;
-import com.fs.graphics.G;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.comm.CommMessageAPI;
@@ -485,8 +484,11 @@ public class AoTDCommIntelPlugin extends BaseEventIntel implements EconomyTickLi
     }
 
     public void deliverCargo(InteractionDialogAPI dialogAPI, CargoAPI deliverCargo) {
-        deliverCargo.addCommodity(Commodities.SUPPLIES,Math.max(Global.getSector().getPlayerFleet().getCargo().getMaxCapacity(),1000));
-        deliverCargo.addCommodity(Commodities.FUEL, Math.max(Global.getSector().getPlayerFleet().getCargo().getMaxFuel(),6000));
+        int[] qty = new int[2];
+        qty[0] = (int) Math.max(Global.getSector().getPlayerFleet().getCargo().getMaxCapacity(),1000);
+        qty[1] = (int) Global.getSector().getPlayerFleet().getCargo().getMaxFuel();
+        deliverCargo.addCommodity(Commodities.SUPPLIES,qty[0]);
+        deliverCargo.addCommodity(Commodities.FUEL,qty[1]);
         Global.getSector().getPlayerFleet().getMemory().set("$aotd_wait_for_resupply", true, 720);
         dialogAPI.getTextPanel().addPara("Supply package has been received!", Color.ORANGE);
     }

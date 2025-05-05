@@ -10,6 +10,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import kaysaar.aotd_question_of_loyalty.data.models.BaseFactionCommisionData;
 import kaysaar.aotd_question_of_loyalty.data.models.RetirementInfo;
+import kaysaar.aotd_question_of_loyalty.data.plugins.AoTDNexMarketUtil;
 import kaysaar.aotd_question_of_loyalty.data.scripts.commision.AoTDCommissionDataManager;
 
 public class AoTDPensionFund implements EconomyTickListener {
@@ -23,7 +24,7 @@ public class AoTDPensionFund implements EconomyTickListener {
     }
     @Override
     public void reportEconomyTick(int iterIndex) {
-        if(!Misc.getPlayerMarkets(false).isEmpty()){
+        if(AoTDNexMarketUtil.doesPlayerHaveMarkets(true)){
             Global.getSector().getListenerManager().removeListener(this);
             return;
         }

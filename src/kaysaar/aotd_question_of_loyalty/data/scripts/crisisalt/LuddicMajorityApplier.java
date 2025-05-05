@@ -1,6 +1,5 @@
 package kaysaar.aotd_question_of_loyalty.data.scripts.crisisalt;
 
-import com.fs.starfarer.C;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.listeners.ColonySizeChangeListener;
 import com.fs.starfarer.api.campaign.listeners.EconomyTickListener;

@@ -24,7 +24,7 @@ public class CommisionReplaceScript extends BaseReplaceScript {
                     dialog.getOptionPanel().removeOption("cmsn_askCommission");
                     List list = dialog.getOptionPanel().getSavedOptionList();
                     dialog.getOptionPanel().clearOptions();
-                    dialog.getOptionPanel().addOption("I would like to be commissioned by "+dialog.getInteractionTarget().getFaction().getDisplayName(),"aotd_cmsn_askCommission", AoTDCommIntelPlugin.optionColor,null);
+                    dialog.getOptionPanel().addOption("I would like to be commissioned by "+dialog.getInteractionTarget().getActivePerson().getFaction().getDisplayName(),"aotd_cmsn_askCommission", AoTDCommIntelPlugin.optionColor,null);
 
 
                     List list2 = dialog.getOptionPanel().getSavedOptionList();

@@ -48,7 +48,11 @@ public class HoldoutEventFactor extends BaseEventFactor {
             return 0;
         }
 
-        float ownershipRatio = (float) marketsStillOwned / (float) originalMarketSize;
+        float ownershipRatio = (float) marketsStillOwned / originalMarketSize;
+
+        if (ownershipRatio == 0) {
+            return 0;
+        }
 
         return (int) (BASE_POINTS / ownershipRatio);
     }

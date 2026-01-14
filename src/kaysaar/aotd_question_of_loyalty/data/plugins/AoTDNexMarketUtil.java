@@ -94,7 +94,9 @@ public class AoTDNexMarketUtil {
             if (dir.getType() != CommDirectoryEntryAPI.EntryType.PERSON) continue;
             PersonAPI person = (PersonAPI)dir.getEntryData();
             if (person.getFaction() != market.getFaction()) continue;
-            if (!NEEDED_OFFICIALS.contains(person.getPostId())) continue;
+            if (Global.getSettings().getModManager().isModEnabled("nexerelin")) {
+                if (!NEEDED_OFFICIALS.contains(person.getPostId())) continue;
+            }
             officialsPresent.add(person.getPostId());
         }
 

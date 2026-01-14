@@ -1,6 +1,5 @@
 package kaysaar.aotd_question_of_loyalty.data.intel;
 
-import ashlib.data.plugins.misc.AshMisc;
 import ashlib.data.plugins.ui.models.BasePopUpDialog;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
@@ -10,28 +9,22 @@ import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.MonthlyReport;
 import com.fs.starfarer.api.campaign.listeners.EconomyTickListener;
-import com.fs.starfarer.api.characters.ImportantPeopleAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.impl.campaign.CoreReputationPlugin;
 import com.fs.starfarer.api.impl.campaign.econ.impl.OrbitalStation;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
-import com.fs.starfarer.api.impl.campaign.ids.Industries;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
-import com.fs.starfarer.api.impl.campaign.ids.Ranks;
 import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
 import com.fs.starfarer.api.impl.campaign.intel.FactionCommissionIntel;
 
 import com.fs.starfarer.api.impl.campaign.intel.MessageIntel;
 import com.fs.starfarer.api.impl.campaign.intel.events.BaseEventIntel;
 import com.fs.starfarer.api.impl.campaign.intel.events.EventFactor;
-import com.fs.starfarer.api.impl.campaign.intel.punitive.PunitiveExpeditionIntel;
-import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator;
 import com.fs.starfarer.api.impl.campaign.rulecmd.AoTDRetirementOption;
 import com.fs.starfarer.api.impl.campaign.shared.SharedData;
 import com.fs.starfarer.api.ui.*;
 import com.fs.starfarer.api.util.Misc;
 import data.kaysaar.aotd.vok.campaign.econ.globalproduction.models.GPManager;
-import exerelin.campaign.fleets.InvasionFleetManager;
 import kaysaar.aotd_question_of_loyalty.data.intel.dialog.RebelionEventDialog;
 import kaysaar.aotd_question_of_loyalty.data.intel.eventfactors.monthly.MonthlyObligationFactor;
 import kaysaar.aotd_question_of_loyalty.data.listeners.AoTDFreeStorageComm;
@@ -42,7 +35,6 @@ import kaysaar.aotd_question_of_loyalty.data.models.RetirementInfo;
 import kaysaar.aotd_question_of_loyalty.data.plugins.AoTDNexMarketUtil;
 import kaysaar.aotd_question_of_loyalty.data.plugins.ProductionUtil;
 import kaysaar.aotd_question_of_loyalty.data.plugins.ReflectionUtilis;
-import kaysaar.aotd_question_of_loyalty.data.scripts.AoTDPensionFund;
 import kaysaar.aotd_question_of_loyalty.data.scripts.commision.AoTDCommissionUtil;
 import kaysaar.aotd_question_of_loyalty.data.scripts.commision.AoTDCommissionDataManager;
 import kaysaar.aotd_question_of_loyalty.data.tags.AoTDCommisionTags;
@@ -54,7 +46,6 @@ import java.util.*;
 import java.util.List;
 
 import static com.fs.starfarer.api.impl.campaign.rulecmd.missions.Commission.COMMISSION_REQ;
-import static exerelin.campaign.ColonyManager.NEEDED_OFFICIALS;
 
 public class AoTDCommIntelPlugin extends BaseEventIntel implements EconomyTickListener {
     BaseFactionCommisionData data;
@@ -244,6 +235,7 @@ public class AoTDCommIntelPlugin extends BaseEventIntel implements EconomyTickLi
             if (this.data.getFaction().isHostileTo(other)) {
                 hostile.add(other);
             }
+
         }
         return hostile;
     }

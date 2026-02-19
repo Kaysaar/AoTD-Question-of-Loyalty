@@ -1,5 +1,6 @@
 package kaysaar.aotd_question_of_loyalty.data.intel;
 
+import ashlib.data.plugins.misc.AshMisc;
 import ashlib.data.plugins.ui.models.BasePopUpDialog;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
@@ -1079,9 +1080,10 @@ public class AoTDCommIntelPlugin extends BaseEventIntel implements EconomyTickLi
             return;
         }
         BasePopUpDialog dialog = new RebelionEventDialog("Start Rebellion",getCurrentlyCommisonedFaction(),ui);
-        CustomPanelAPI panelAPI = Global.getSettings().createCustom(800, 300, dialog);
-        UIPanelAPI panelAPI1 = ProductionUtil.getCoreUI();
-        dialog.init(panelAPI, panelAPI1.getPosition().getCenterX() - (panelAPI.getPosition().getWidth() / 2), panelAPI1.getPosition().getCenterY() + (panelAPI.getPosition().getHeight() / 2), true);
+//        CustomPanelAPI panelAPI = Global.getSettings().createCustom(800, 300, dialog);
+//        UIPanelAPI panelAPI1 = ProductionUtil.getCoreUI();
+//        dialog.init(panelAPI, panelAPI1.getPosition().getCenterX() - (panelAPI.getPosition().getWidth() / 2), panelAPI1.getPosition().getCenterY() + (panelAPI.getPosition().getHeight() / 2), true);
+        AshMisc.initPopUpDialog(dialog,800, 300);
         ui.updateUIForItem(this);
     }
     public float getCreditsForRetirement(){

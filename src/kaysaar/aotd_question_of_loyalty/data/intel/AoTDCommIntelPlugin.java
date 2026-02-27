@@ -645,8 +645,8 @@ public class AoTDCommIntelPlugin extends BaseEventIntel implements EconomyTickLi
             // reached
             if (curr.progress <= progress) {
 
-                if (curr != null && (!prev.wasEverReached)) {
-                    if (curr.sendIntelUpdateOnReaching && curr.progress > 0 && (prev == null || prev.progress < curr.progress)) {
+                if (!curr.wasEverReached) {
+                    if (curr.sendIntelUpdateOnReaching && curr.progress > 0 && prev.progress < curr.progress) {
                         sendUpdateIfPlayerHasIntel(curr, getTextPanelForStageChange());
                     }
                     notifyStageReached(curr);

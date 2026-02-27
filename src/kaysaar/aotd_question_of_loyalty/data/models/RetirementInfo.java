@@ -13,7 +13,7 @@ public class RetirementInfo {
     }
     public RetirementInfo(String prevRankId, float assignedPension, String factionId) {
         this.prevRankId = prevRankId;
-        this.salary = salary;
+        this.salary = assignedPension;
         this.prevFaction = factionId;
     }
 

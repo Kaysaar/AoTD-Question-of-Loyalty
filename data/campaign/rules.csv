@@ -16,12 +16,12 @@ FireBest CMSNTextHasOther",,,
 aotd_cmsn_doesNotMeetCriteria,DialogOptionSelected,"$option == aotd_cmsn_askCommission
 !AoTDCommision playerMeetsCriteria","SetEnabled aotd_cmsn_askCommission false
 FireBest CMSNTextUnsuited
-Commission printRequirements",,,
+AoTDCommision printRequirements",,,
 aotd_cmsn_meetsCriteria,DialogOptionSelected,"$option == aotd_cmsn_askCommission
 AoTDCommision playerMeetsCriteria
 !AoTDCommision isSteppingIntoNoReturn",FireBest CMSNTextSuitedPart1,,0:aotd_cmsn_continueMeetsReq:Continue,
 aotd_cmsn_meetsCriteria2,DialogOptionSelected,$option == aotd_cmsn_continueMeetsReq,"AoTDCommision printInfo
-FireBest CMSNTextSuitedPart2",,"0:aotd_cmsn_accept:Accept $factionAOrAn $faction commission
+FireBest CMSNTextSuitedPart2",,"0:aotd_cmsn_accept:Accept $factionAOrAn $personFaction commission
 1:aotd_cmsn_cancel:""Perhaps I'm not quite ready for this.""",
 aotd_cmsn_accept,DialogOptionSelected,$option == aotd_cmsn_accept,"FireBest CMSNTextWelcomePart1
 AoTDCommision accept
@@ -69,31 +69,47 @@ aotd_promotion_after_warning,DialogOptionSelected,$option == aotd_confirm_no_goi
 aotd_promotion_decline ,DialogOptionSelected,$option == aotd_return_no_rank,FireAll PopulateOptions,,,
 ,,,,,,
 #Smuggler mechanic ,,,,,,
-aotd_can_cargo_check,OpenCommLink,AoTDSmugglerScan canCargoCheck score:20000,ShowDefaultVisual,,"10:aotd_cargo_scan:We would like to scan your cargo
+aotd_can_cargo_check,OpenCommLink,AoTDSmugglerScan canCargoCheck score:20000,ShowDefaultVisual,"Hail Captain, what seems to be the trouble today?","10:aotd_cargo_scan:We would like to scan your cargo
 20:cutCommLink:Cut the comm link",
 aotd_can_cargo_pop_options,DialogOptionSelected,$option == aotd_cargo_scan,AoTDSmugglerScan getResultsOfScan,,,
 aotd_can_cargo_seize,DialogOptionSelected,$option == aotd_seize_cargo,AoTDSmugglerScan pillage,,,
 ,,,,,,
+#Acutally supplying you mechanic tm,,,,,,
+,,,,,,
+aotd_ask_for_supplies,PopulateOptions,"$postId == supplyOfficer
+AoTDCommision isCommissionedByPersonFaction",,,"5:aotd_ask_for_supply:""I would like to request supply package""",
+aotd_must_wait,DialogOptionSelected,"$option == aotd_ask_for_supply
+AoTDCommision isStillWaiting","SetEnabled aotd_ask_for_supply false","Unfortunatley, from what it seems you already claimed your package.Please come back later,when you will be able to claim package again!",,
+aotd_proceed_with_asking,DialogOptionSelected,"$option == aotd_ask_for_supply
+!AoTDCommision isStillWaiting",AoTDCommision printResponse,,"5:aotd_give_supplies:""Please deliver them to our ships""
+10:aotd_give_supplies_storage:""Please deliver them to local storage""
+20:aotd_end_conversation:""On second thought, I don't need those supplies""
+",
+aotd_deny_free_supply,DialogOptionSelected,$option == aotd_end_conversation,FireAll PopulateOptions,,,
+aotd_grant_supplies_storage,DialogOptionSelected,$option == aotd_give_supplies_storage,"AoTDHandleSupplyGiving toStorage
+FireAll PopulateOptions",,,
+aotd_grant_supplies_ship,DialogOptionSelected,$option == aotd_give_supplies,"AoTDHandleSupplyGiving toShip
+FireAll PopulateOptions",,,
+#Retirement option to leave faction and just be old man,,,,,,
+aotd_retire_init,DialogOptionSelected,$option == aotd_cmsn_retire,AoTDRetirementOption init,,,
+aotd_retire_confirm,DialogOptionSelected,$option == aotd_confirm_retirement,"AoTDRetirementOption proceed
+FireAll PopulateOptions",,,
+aotd_retire_cancel,DialogOptionSelected,$option == aotd_cancel_retirement,FireAll PopulateOptions,,,
+,,,,,,
+#AoTDTraitorFleet,,,,,,
 ,,,,,,
 ,,,,,,
+TraitorHunterDefaultFirstTime,OpenCommLink,"$entity.aotd_traitor_hunter score:10000
+!$entity.ignorePlayerCommRequests","$entity.ignorePlayerCommRequests = true
+AoTDCreateInsultForLeaving",,cutCommLinkNoText:Cut the comm link,
+TraitorHunterDefault,OpenCommLink,"$entity.aotd_traitor_hunter score:10000
+$entity.ignorePlayerCommRequests","ShowDefaultVisual
+EndConversation",The comm link is cut before you have a chance to say much of anything else.,,
 ,,,,,,
-,,,,,,
-,,,,,,
-,,,,,,
-,,,,,,
-,,,,,,
-,,,,,,
-,,,,,,
-,,,,,,
-,,,,,,
-,,,,,,
-,,,,,,
-,,,,,,
-,,,,,,
-,,,,,,
-,,,,,,
-,,,,,,
-,,,,,,
+rh_handleCommission,DialogOptionSelected,"$option == rh_acceptMembership
+!AoTDCommision hasFactionCommission score:100000
+!$didCommissionStep","AoTDCommision accept
+$didCommissionStep = true 0","Meanwhile, you skim and certify the executive summary of the Persean League commission credentials.",rh_acceptMembership:Continue,
 ,,,,,,
 ,,,,,,
 ,,,,,,

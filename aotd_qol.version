@@ -1,11 +1,12 @@
 {
     "masterVersionFile":"https://raw.githubusercontent.com/Kaysaar/AoTD-Question-of-Loyalty/main/aotd_qol.version",
     "modName":"Ashes of The Domain - Question of Loyalty",
+    "directDownloadURL":"https://github.com/Kaysaar/AoTD-Question-of-Loyalty/releases/download/minor/Ashes.of.The.Domain.-.Question.Of.Loyalty.zip",
     "modThreadId":26307,
     "modVersion":
     {
         "major":2,
         "minor":0,
-        "patch":8
+        "patch":9
     },
 }
